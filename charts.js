@@ -1,8 +1,12 @@
 let weightChart, runningChart, bikingChart;
 
+// Register the datalabels plugin
+Chart.register(ChartDataLabels);
+
 // Common chart options
 const commonOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     interaction: {
         mode: 'index',
         intersect: false,
@@ -13,14 +17,7 @@ const commonOptions = {
     },
     plugins: {
         legend: {
-            labels: {
-                usePointStyle: true,
-                padding: 15,
-                font: {
-                    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                    size: 12
-                }
-            }
+            display: false
         },
         tooltip: {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -34,28 +31,65 @@ const commonOptions = {
             },
             bodySpacing: 8,
             usePointStyle: true,
+            filter: function(tooltipItem) {
+                // Don't show goal lines in tooltip
+                return !tooltipItem.dataset.label.includes('Goal');
+            },
             callbacks: {
                 label: function(context) {
                     let label = context.dataset.label || '';
-                    if (label) {
-                        label += ': ';
-                    }
                     if (context.parsed.y !== null) {
-                        label += context.parsed.y;
-                        if (label.includes('Miles')) {
+                        label = context.parsed.y;
+                        if (context.dataset.label.includes('Miles')) {
                             label += ' mi';
-                        } else if (label.includes('Weight')) {
+                        } else if (context.dataset.label.includes('Weight')) {
                             label += ' lbs';
-                        } else if (label.includes('Fat')) {
+                        } else if (context.dataset.label.includes('Body Fat')) {
                             label += '%';
                         }
                     }
                     return label;
                 }
             }
+        },
+        datalabels: {
+            display: function (context) {
+                // Show for last cumulative point and goal line
+                return (
+                    (context.datasetIndex === 1 &&
+                        context.dataIndex === context.dataset.data.length - 1 &&
+                        context.dataset.data[context.dataIndex] !== null) ||
+                    (context.datasetIndex === 2 && context.dataIndex === 2)
+                );
+            },
+            align: function (context) {
+                // Align to left of the point
+                return context.datasetIndex === 2 ? 'start' : 'left';
+            },
+            anchor: function (context) {
+                // Anchor above the point
+                return context.datasetIndex === 2 ? 'end' : 'end';
+            },
+            offset: function (context) {
+                // Higher negative offset to move label upward more aggressively
+                return context.datasetIndex === 2 ? 0 : 0;
+            },
+            color: function (context) {
+                return context.datasetIndex === 2 ? '#000000' : 'rgba(255, 255, 255, 0.9)';
+            },
+            font: {
+                size: 13,
+                weight: '600',
+            },
+            formatter: function (value, context) {
+                if (context.datasetIndex === 2) {
+                    return "'24 Goal: " + value;
+                }
+                return value + ' ';
+            },
         }
     }
-};
+}
 
 function createCharts() {
     // Weight and Body Fat Chart (dual axis)
@@ -70,24 +104,24 @@ function createCharts() {
                     data: [],
                     borderColor: 'rgb(75, 192, 192)',
                     backgroundColor: 'rgba(75, 192, 192, 0.1)',
-                    borderWidth: 2,
+                    borderWidth: 2.5,
                     fill: true,
                     yAxisID: 'y-weight',
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
                 },
                 {
                     label: 'Body Fat',
                     data: [],
                     borderColor: 'rgb(255, 99, 132)',
                     backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                    borderWidth: 2,
+                    borderWidth: 2.5,
                     fill: true,
                     yAxisID: 'y-bodyfat',
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
                 }
             ]
         },
@@ -104,6 +138,13 @@ function createCharts() {
                     },
                     grid: {
                         display: false
+                    },
+                    ticks: {
+                        maxRotation: 0,
+                        font: {
+                            size: 11
+                        },
+                        color: '#000000'
                     }
                 },
                 'y-weight': {
@@ -113,15 +154,23 @@ function createCharts() {
                         display: true,
                         text: 'Weight (lbs)',
                         font: {
-                            size: 13
-                        }
+                            size: 12,
+                            weight: '500'
+                        },
+                        color: '#000000'
                     },
                     grid: {
                         color: 'rgba(75, 192, 192, 0.1)'
                     },
                     ticks: {
-                        callback: value => `${value} lbs`
-                    }
+                        callback: value => `${value} lbs`,
+                        font: {
+                            size: 11
+                        },
+                        color: '#000000'
+                    },
+                    min: 165,
+                    max: 175
                 },
                 'y-bodyfat': {
                     type: 'linear',
@@ -130,15 +179,23 @@ function createCharts() {
                         display: true,
                         text: 'Body Fat %',
                         font: {
-                            size: 13
-                        }
+                            size: 12,
+                            weight: '500'
+                        },
+                        color: '#000000'
                     },
                     grid: {
                         display: false
                     },
                     ticks: {
-                        callback: value => `${value}%`
-                    }
+                        callback: value => `${value}%`,
+                        font: {
+                            size: 11
+                        },
+                        color: '#000000'
+                    },
+                    min: 10,
+                    max: 14
                 }
             }
         }
@@ -146,18 +203,49 @@ function createCharts() {
 
     // Running/Walking Chart
     const runningCtx = document.getElementById('runningChart').getContext('2d');
+    const runningGoalLine = Array(12).fill(500);
     runningChart = new Chart(runningCtx, {
         type: 'bar',
         data: {
-            labels: [],
-            datasets: [{
-                label: 'Monthly Miles',
-                data: [],
-                backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                borderRadius: 6,
-                borderSkipped: false,
-                hoverBackgroundColor: 'rgb(54, 162, 235)'
-            }]
+            labels: Array.from({length: 12}, (_, i) => new Date(2024, i, 1)),
+            datasets: [
+                {
+                    label: 'Monthly Miles',
+                    data: Array(12).fill(null),
+                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                    borderRadius: 6,
+                    borderSkipped: false,
+                    hoverBackgroundColor: 'rgb(255, 255, 255)',
+                    order: 2
+                },
+                {
+                    label: 'Cumulative Miles',
+                    data: Array(12).fill(null),
+                    borderColor: 'rgba(255, 255, 255, 0.6)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 2.5,
+                    type: 'line',
+                    yAxisID: 'y-cumulative',
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    fill: true,
+                    order: 1
+                },
+                {
+                    label: 'Annual Goal (500 mi)',
+                    data: runningGoalLine,
+                    borderColor: 'rgba(255, 255, 255, 0.7)',
+                    backgroundColor: 'transparent',
+                    borderWidth: 1.5,
+                    borderDash: [4, 4],
+                    type: 'line',
+                    yAxisID: 'y-cumulative',
+                    pointRadius: 0,
+                    fill: false,
+                    order: 0
+                }
+            ]
         },
         options: {
             ...commonOptions,
@@ -167,28 +255,67 @@ function createCharts() {
                     time: {
                         unit: 'month',
                         displayFormats: {
-                            month: 'MMM yyyy'
+                            month: 'MMM'
                         }
                     },
                     grid: {
                         display: false
+                    },
+                    ticks: {
+                        maxRotation: 0,
+                        autoSkip: false,
+                        padding: 8,
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        },
+                        color: '#000000'
                     }
                 },
                 y: {
                     beginAtZero: true,
+                    position: 'left',
                     title: {
                         display: true,
-                        text: 'Distance (miles)',
+                        text: 'Monthly Distance (miles)',
+                        padding: {
+                            bottom: 10
+                        },
                         font: {
-                            size: 13
-                        }
+                            size: 13,
+                            weight: '600'
+                        },
+                        color: '#000000'
                     },
                     grid: {
                         color: 'rgba(255, 255, 255, 0.1)'
                     },
                     ticks: {
-                        callback: value => `${value} mi`
-                    }
+                        callback: value => `${value} mi`,
+                        maxTicksLimit: 6,
+                        stepSize: 20,
+                        padding: 8,
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        },
+                        color: '#000000'
+                    },
+                    suggestedMax: 120
+                },
+                'y-cumulative': {
+                    beginAtZero: true,
+                    position: 'right',
+                    title: {
+                        display: false
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        display: false
+                    },
+                    max: 700
                 }
             }
         }
@@ -196,18 +323,49 @@ function createCharts() {
 
     // Biking Chart
     const bikingCtx = document.getElementById('bikingChart').getContext('2d');
+    const bikingGoalLine = Array(12).fill(1000);
     bikingChart = new Chart(bikingCtx, {
         type: 'bar',
         data: {
-            labels: [],
-            datasets: [{
-                label: 'Monthly Miles',
-                data: [],
-                backgroundColor: 'rgba(255, 159, 64, 0.8)',
-                borderRadius: 6,
-                borderSkipped: false,
-                hoverBackgroundColor: 'rgb(255, 159, 64)'
-            }]
+            labels: Array.from({length: 12}, (_, i) => new Date(2024, i, 1)),
+            datasets: [
+                {
+                    label: 'Monthly Miles',
+                    data: Array(12).fill(null),
+                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                    borderRadius: 6,
+                    borderSkipped: false,
+                    hoverBackgroundColor: 'rgb(255, 255, 255)',
+                    order: 2
+                },
+                {
+                    label: 'Cumulative Miles',
+                    data: Array(12).fill(null),
+                    borderColor: 'rgba(255, 255, 255, 0.6)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 2.5,
+                    type: 'line',
+                    yAxisID: 'y-cumulative',
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    fill: true,
+                    order: 1
+                },
+                {
+                    label: 'Annual Goal (1000 mi)',
+                    data: bikingGoalLine,
+                    borderColor: 'rgba(255, 255, 255, 0.7)',
+                    backgroundColor: 'transparent',
+                    borderWidth: 1.5,
+                    borderDash: [4, 4],
+                    type: 'line',
+                    yAxisID: 'y-cumulative',
+                    pointRadius: 0,
+                    fill: false,
+                    order: 0
+                }
+            ]
         },
         options: {
             ...commonOptions,
@@ -217,28 +375,67 @@ function createCharts() {
                     time: {
                         unit: 'month',
                         displayFormats: {
-                            month: 'MMM yyyy'
+                            month: 'MMM'
                         }
                     },
                     grid: {
                         display: false
+                    },
+                    ticks: {
+                        maxRotation: 0,
+                        autoSkip: false,
+                        padding: 8,
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        },
+                        color: '#000000'
                     }
                 },
                 y: {
                     beginAtZero: true,
+                    position: 'left',
                     title: {
                         display: true,
-                        text: 'Distance (miles)',
+                        text: 'Monthly Distance (miles)',
+                        padding: {
+                            bottom: 10
+                        },
                         font: {
-                            size: 13
-                        }
+                            size: 13,
+                            weight: '600'
+                        },
+                        color: '#000000'
                     },
                     grid: {
                         color: 'rgba(255, 255, 255, 0.1)'
                     },
                     ticks: {
-                        callback: value => `${value} mi`
-                    }
+                        callback: value => `${value} mi`,
+                        maxTicksLimit: 6,
+                        stepSize: 50,
+                        padding: 8,
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        },
+                        color: '#000000'
+                    },
+                    suggestedMax: 350
+                },
+                'y-cumulative': {
+                    beginAtZero: true,
+                    position: 'right',
+                    title: {
+                        display: false
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        display: false
+                    },
+                    max: 1400
                 }
             }
         }
@@ -249,21 +446,51 @@ function updateCharts(data) {
     // Use the actual Date objects for the x-axis
     const dates = data.dates;
 
+    // Calculate cumulative totals
+    const runningCumulative = [];
+    const bikingCumulative = [];
+    let runningTotal = 0;
+    let bikingTotal = 0;
+
+    data.running.forEach(miles => {
+        runningTotal += (miles || 0);
+        runningCumulative.push(runningTotal);
+    });
+
+    data.biking.forEach(miles => {
+        bikingTotal += (miles || 0);
+        bikingCumulative.push(bikingTotal);
+    });
+
+    // Calculate the max y-axis values with 10% padding
+    const runningMax = Math.max(
+        runningTotal * 1.1,
+        500 // minimum to always show goal line
+    );
+    const bikingMax = Math.max(
+        bikingTotal * 1.1,
+        1000 // minimum to always show goal line
+    );
+
     // Update Weight and Body Fat Chart
     weightChart.data.labels = dates;
     weightChart.data.datasets[0].data = data.weight;
     weightChart.data.datasets[1].data = data.bodyfat;
-    weightChart.update('show');
+    weightChart.update('none');
 
     // Update Running Chart
     runningChart.data.labels = dates;
     runningChart.data.datasets[0].data = data.running;
-    runningChart.update('show');
+    runningChart.data.datasets[1].data = runningCumulative;
+    runningChart.options.scales['y-cumulative'].max = runningMax;
+    runningChart.update('none');
 
     // Update Biking Chart
     bikingChart.data.labels = dates;
     bikingChart.data.datasets[0].data = data.biking;
-    bikingChart.update('show');
+    bikingChart.data.datasets[1].data = bikingCumulative;
+    bikingChart.options.scales['y-cumulative'].max = bikingMax;
+    bikingChart.update('none');
 }
 
 // Create charts when the page loads
