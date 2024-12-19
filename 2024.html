@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acwints - 2024</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">acwints</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="2024.html" class="active">2024</a>
+        </div>
+    </nav>
+    <main>
+        <div class="container">
+            <section class="platform-section strava-section">
+                <div class="platform-header">
+                    <img src="https://meta-q.cdn.bubble.io/f1719182442061x788809796537048800/strava-icon-2048x2048-4fppqh38.png" alt="Strava" class="platform-logo">
+                    <h1>Activities</h1>
+                </div>
+                <div class="content-grid">
+                    <div class="chart-container">
+                        <div class="metric-header">
+                            <i class="fas fa-running"></i>
+                            <h2>Running/Walking Distance</h2>
+                        </div>
+                        <canvas id="runningChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="metric-header">
+                            <i class="fas fa-bicycle"></i>
+                            <h2>Biking/Cycling Distance</h2>
+                        </div>
+                        <canvas id="bikingChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="platform-section withings-section">
+                <div class="platform-header">
+                    <img src="https://m.media-amazon.com/images/I/514Lr2Tq-4L.png" alt="Withings" class="platform-logo">
+                    <h1>Health Metrics</h1>
+                </div>
+                <div class="content-grid">
+                    <div class="chart-container">
+                        <div class="metric-header">
+                            <i class="fas fa-weight"></i>
+                            <h2>Weight & Body Fat</h2>
+                        </div>
+                        <canvas id="weightChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <script src="sheets.js"></script>
+    <script src="charts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadGoogleApi);
+    </script>
+</body>
+</html> 
