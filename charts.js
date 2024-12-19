@@ -24,15 +24,17 @@ const commonOptions = {
             padding: 12,
             titleFont: {
                 size: 14,
-                weight: 'bold'
+                weight: '600',
+                family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
             },
             bodyFont: {
-                size: 13
+                size: 13,
+                weight: '500',
+                family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
             },
             bodySpacing: 8,
             usePointStyle: true,
             filter: function(tooltipItem) {
-                // Don't show goal lines in tooltip
                 return !tooltipItem.dataset.label.includes('Goal');
             },
             callbacks: {
@@ -54,7 +56,10 @@ const commonOptions = {
         },
         datalabels: {
             display: function (context) {
-                // Show for last cumulative point and goal line
+                const chartType = context.chart.canvas.id;
+                if (chartType === 'weightChart') {
+                    return false;
+                }
                 return (
                     (context.datasetIndex === 1 &&
                         context.dataIndex === context.dataset.data.length - 1 &&
@@ -63,15 +68,12 @@ const commonOptions = {
                 );
             },
             align: function (context) {
-                // Align to left of the point
                 return context.datasetIndex === 2 ? 'start' : 'left';
             },
             anchor: function (context) {
-                // Anchor above the point
                 return context.datasetIndex === 2 ? 'end' : 'end';
             },
             offset: function (context) {
-                // Higher negative offset to move label upward more aggressively
                 return context.datasetIndex === 2 ? 0 : 0;
             },
             color: function (context) {
@@ -80,6 +82,7 @@ const commonOptions = {
             font: {
                 size: 13,
                 weight: '600',
+                family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
             },
             formatter: function (value, context) {
                 if (context.datasetIndex === 2) {
@@ -90,6 +93,36 @@ const commonOptions = {
         }
     }
 }
+
+// Common axis font configuration
+const commonAxisConfig = {
+    font: {
+        size: 12,
+        weight: '500',
+        family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    },
+    color: '#000000'
+};
+
+// Common time axis configuration
+const commonTimeAxis = {
+    type: 'time',
+    time: {
+        unit: 'month',
+        displayFormats: {
+            month: 'MMM'
+        }
+    },
+    grid: {
+        display: false
+    },
+    ticks: {
+        ...commonAxisConfig,
+        maxRotation: 0,
+        autoSkip: false,
+        padding: 8
+    }
+};
 
 function createCharts() {
     // Weight and Body Fat Chart (dual axis)
@@ -102,8 +135,8 @@ function createCharts() {
                 {
                     label: 'Weight',
                     data: [],
-                    borderColor: 'rgb(75, 192, 192)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                    borderColor: 'rgb(220, 38, 38)',
+                    backgroundColor: 'rgba(220, 38, 38, 0.1)',
                     borderWidth: 2.5,
                     fill: true,
                     yAxisID: 'y-weight',
@@ -114,8 +147,8 @@ function createCharts() {
                 {
                     label: 'Body Fat',
                     data: [],
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    borderColor: 'rgb(255, 206, 0)',
+                    backgroundColor: 'rgba(255, 206, 0, 0.1)',
                     borderWidth: 2.5,
                     fill: true,
                     yAxisID: 'y-bodyfat',
@@ -128,46 +161,21 @@ function createCharts() {
         options: {
             ...commonOptions,
             scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'month',
-                        displayFormats: {
-                            month: 'MMM yyyy'
-                        }
-                    },
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        maxRotation: 0,
-                        font: {
-                            size: 11
-                        },
-                        color: '#000000'
-                    }
-                },
+                x: commonTimeAxis,
                 'y-weight': {
                     type: 'linear',
                     position: 'left',
                     title: {
                         display: true,
                         text: 'Weight (lbs)',
-                        font: {
-                            size: 12,
-                            weight: '500'
-                        },
-                        color: '#000000'
+                        ...commonAxisConfig
                     },
                     grid: {
                         color: 'rgba(75, 192, 192, 0.1)'
                     },
                     ticks: {
-                        callback: value => `${value} lbs`,
-                        font: {
-                            size: 11
-                        },
-                        color: '#000000'
+                        ...commonAxisConfig,
+                        callback: value => `${value} lbs`
                     },
                     min: 165,
                     max: 175
@@ -178,21 +186,14 @@ function createCharts() {
                     title: {
                         display: true,
                         text: 'Body Fat %',
-                        font: {
-                            size: 12,
-                            weight: '500'
-                        },
-                        color: '#000000'
+                        ...commonAxisConfig
                     },
                     grid: {
                         display: false
                     },
                     ticks: {
-                        callback: value => `${value}%`,
-                        font: {
-                            size: 11
-                        },
-                        color: '#000000'
+                        ...commonAxisConfig,
+                        callback: value => `${value}%`
                     },
                     min: 10,
                     max: 14
@@ -250,28 +251,7 @@ function createCharts() {
         options: {
             ...commonOptions,
             scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'month',
-                        displayFormats: {
-                            month: 'MMM'
-                        }
-                    },
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        maxRotation: 0,
-                        autoSkip: false,
-                        padding: 8,
-                        font: {
-                            size: 12,
-                            weight: '500'
-                        },
-                        color: '#000000'
-                    }
-                },
+                x: commonTimeAxis,
                 y: {
                     beginAtZero: true,
                     position: 'left',
@@ -281,25 +261,17 @@ function createCharts() {
                         padding: {
                             bottom: 10
                         },
-                        font: {
-                            size: 13,
-                            weight: '600'
-                        },
-                        color: '#000000'
+                        ...commonAxisConfig
                     },
                     grid: {
                         color: 'rgba(255, 255, 255, 0.1)'
                     },
                     ticks: {
+                        ...commonAxisConfig,
                         callback: value => `${value} mi`,
                         maxTicksLimit: 6,
                         stepSize: 20,
-                        padding: 8,
-                        font: {
-                            size: 12,
-                            weight: '500'
-                        },
-                        color: '#000000'
+                        padding: 8
                     },
                     suggestedMax: 120
                 },
@@ -370,28 +342,7 @@ function createCharts() {
         options: {
             ...commonOptions,
             scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'month',
-                        displayFormats: {
-                            month: 'MMM'
-                        }
-                    },
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        maxRotation: 0,
-                        autoSkip: false,
-                        padding: 8,
-                        font: {
-                            size: 12,
-                            weight: '500'
-                        },
-                        color: '#000000'
-                    }
-                },
+                x: commonTimeAxis,
                 y: {
                     beginAtZero: true,
                     position: 'left',
@@ -401,25 +352,17 @@ function createCharts() {
                         padding: {
                             bottom: 10
                         },
-                        font: {
-                            size: 13,
-                            weight: '600'
-                        },
-                        color: '#000000'
+                        ...commonAxisConfig
                     },
                     grid: {
                         color: 'rgba(255, 255, 255, 0.1)'
                     },
                     ticks: {
+                        ...commonAxisConfig,
                         callback: value => `${value} mi`,
                         maxTicksLimit: 6,
                         stepSize: 50,
-                        padding: 8,
-                        font: {
-                            size: 12,
-                            weight: '500'
-                        },
-                        color: '#000000'
+                        padding: 8
                     },
                     suggestedMax: 350
                 },
