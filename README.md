@@ -1,2 +1,0 @@
-# acwints
- acwints.com
