@@ -131,25 +131,40 @@ main {
 }
 
 .platform-logo-wrapper {
-    height: 40px;
-    width: 40px;
+    height: 56px;
+    width: 56px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(8px);
+    border-radius: 12px;
 }
 
 .platform-logo {
-    height: 28px;
-    width: 28px;
+    height: 56px;
+    width: 56px;
     object-fit: contain;
+    border-radius: 12px;
 }
 
 .platform-header h1 {
     font-size: 1.8rem;
     font-weight: 600;
+}
+
+.platform-link {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+}
+
+.platform-link:hover {
+    opacity: 0.9;
 }
 
 .strava-section {
@@ -159,6 +174,21 @@ main {
 
 .withings-section {
     background: linear-gradient(135deg, var(--withings-blue) 0%, #00d4e4 100%);
+    color: var(--light-text);
+}
+
+.goodreads-section {
+    background: linear-gradient(135deg, #FFD700 0%, #FFC000 100%);
+    color: var(--dark-text);
+}
+
+.bantee-section {
+    background: linear-gradient(135deg, #6c9f7e 0%, #8ab89c 100%);
+    color: var(--light-text);
+}
+
+.spotify-section {
+    background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
     color: var(--light-text);
 }
 
@@ -199,6 +229,84 @@ main {
 
 .withings-section .chart-container {
     color: var(--dark-bg);
+}
+
+.goodreads-section .chart-container {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    height: auto;
+    min-height: 200px;
+    position: relative;
+    z-index: 0;
+    color: var(--dark-text);
+}
+
+.bantee-section .chart-container {
+    background-color: rgba(255, 255, 255, 0.1);
+    height: auto;
+    min-height: 200px;
+}
+
+.spotify-section .chart-container {
+    padding: 1rem;
+    height: auto;
+    min-height: 820px;
+}
+
+.spotify-section .metric-header {
+    margin-bottom: 1.5rem;
+}
+
+.spotify-section .metric-header i {
+    color: var(--light-text);
+}
+
+.spotify-section .metric-header h2 {
+    color: var(--light-text);
+    font-size: 1.4rem;
+}
+
+.books-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+    margin: 0 auto;
+    justify-items: center;
+}
+
+.book-card {
+    width: 150px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.book-cover {
+    width: 150px;
+    height: 225px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease;
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .books-container {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+    }
+    
+    .book-card {
+        width: 120px;
+    }
+    
+    .book-cover {
+        width: 120px;
+        height: 180px;
+    }
 }
 
 canvas {
@@ -259,29 +367,27 @@ footer {
 }
 
 @media (max-width: 768px) {
-    :root {
-        --header-height: 60px;
-    }
-
     nav {
         padding: 0 1rem;
     }
 
     .logo {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
 
     .nav-links {
-        gap: 1rem;
+        gap: 0.75rem;
     }
 
     .nav-links a {
-        font-size: 1rem;
+        font-size: 0.9rem;
         padding: 0.4rem 0.8rem;
     }
 
     main {
-        padding: calc(var(--header-height) + 1rem) 1rem var(--footer-height);
+        padding-top: calc(var(--header-height) + 1rem);
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
     }
 
     .content-grid {
@@ -294,28 +400,40 @@ footer {
         padding: 1rem;
     }
 
+    .platform-logo-wrapper {
+        height: 40px;
+        width: 40px;
+    }
+
+    .platform-logo {
+        height: 40px;
+        width: 40px;
+    }
+
     .platform-header h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+    }
+
+    .metric-header h2 {
+        font-size: 1.1rem;
+    }
+
+    .metric-header i {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-grid {
+        padding: 0.75rem;
     }
 
     .chart-container {
-        height: 300px;
         padding: 1rem;
     }
 
-    footer {
-        padding: 1rem;
-    }
-
-    .footer-content {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-
-    .footer-links {
-        gap: 1rem;
-        justify-content: center;
+    .stat-number {
+        font-size: 2rem;
     }
 }
 
@@ -325,4 +443,662 @@ footer {
 
 .withings-section .platform-logo-wrapper {
     background-color: transparent;
+}
+
+.goodreads-section .platform-logo-wrapper {
+    background-color: transparent;
+}
+
+.goodreads-container {
+    background-color: #ffd700;
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+.books-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.book-item {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.book-item:not(.empty):hover {
+    transform: translateY(-5px);
+}
+
+.book-item.empty {
+    visibility: hidden;
+}
+
+.book-cover {
+    width: 120px;
+    height: 180px;
+    margin-bottom: 1rem;
+}
+
+.book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.book-info {
+    width: 100%;
+    text-align: center;
+}
+
+.book-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+    max-height: 2.4em;
+    line-height: 1.2;
+}
+
+.book-author {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.book-rating {
+    color: #ffd700;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.book-date {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.loading,
+.error,
+.no-books {
+    text-align: center;
+    padding: 2rem;
+    width: 100%;
+    color: #666;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1200px) {
+    .books-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .books-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .book-item {
+        padding: 0.875rem;
+    }
+    
+    .book-cover {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 2/3;
+        margin-bottom: 0.75rem;
+    }
+    
+    .book-title {
+        font-size: 0.85rem;
+        margin-bottom: 0.2rem;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+    }
+    
+    .book-author {
+        font-size: 0.75rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .book-rating {
+        font-size: 0.85rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .book-date {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .books-grid {
+        gap: 0.875rem;
+    }
+    
+    .book-item {
+        padding: 0.75rem;
+    }
+
+    .book-cover {
+        margin-bottom: 0.625rem;
+    }
+
+    .book-title {
+        font-size: 0.8rem;
+    }
+    
+    .book-author, .book-date {
+        font-size: 0.7rem;
+    }
+
+    .book-rating {
+        font-size: 0.8rem;
+    }
+}
+
+.bantee-section .platform-logo-wrapper {
+    background-color: transparent;
+}
+
+.stat-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100% - 60px);
+    padding: 2rem;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--light-text);
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 768px) {
+    .stat-number {
+        font-size: 2.5rem;
+    }
+    
+    .stat-label {
+        font-size: 1rem;
+    }
+    
+    .stat-display {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .platform-logo-wrapper {
+        height: 40px;
+        width: 40px;
+        border-radius: 8px;
+    }
+    
+    .platform-logo {
+        height: 40px;
+        width: 40px;
+        border-radius: 8px;
+    }
+}
+
+.spotify-section .platform-logo-wrapper {
+    background-color: transparent;
+}
+
+.podcasts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.podcast-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 12px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    text-decoration: none;
+    color: var(--light-text);
+}
+
+.podcast-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.podcast-cover {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.podcast-info {
+    flex: 1;
+}
+
+.podcast-info h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.podcast-info p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .podcasts-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .podcast-card {
+        padding: 0.75rem;
+    }
+    
+    .podcast-cover {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .podcast-info h3 {
+        font-size: 1rem;
+    }
+    
+    .podcast-info p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .spotify-section .content-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .spotify-section .chart-container {
+        min-height: 650px;
+        padding: 1rem;
+    }
+
+    .spotify-section .metric-header {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .spotify-section .chart-container {
+        min-height: 550px;
+        padding: 0.875rem;
+    }
+    
+    .spotify-section .metric-header {
+        margin-bottom: 0.875rem;
+    }
+}
+
+.github-section {
+    background: linear-gradient(135deg, #2b3137 0%, #24292e 100%);
+    color: var(--light-text);
+}
+
+.github-section .chart-container {
+    padding: 1.5rem;
+    height: auto;
+    min-height: 300px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.github-section .platform-logo-wrapper {
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.github-section .platform-logo-wrapper i {
+    color: var(--light-text);
+    font-size: 2.5rem;
+}
+
+.github-contributions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 1rem;
+    background: rgba(13, 17, 23, 0.8);
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.contributions-graph {
+    display: block;
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    border-radius: 8px;
+    filter: drop-shadow(0 4px 12px rgba(13, 17, 23, 0.3));
+}
+
+.github-stats {
+    display: none;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    width: 100%;
+}
+
+.github-stats .stat-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.github-stats .stat-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+}
+
+.github-stats .stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--light-text);
+}
+
+@media (max-width: 768px) {
+    .github-section .chart-container {
+        min-height: 250px;
+        padding: 1rem;
+    }
+
+    .github-contributions {
+        padding: 1rem;
+        margin-top: 0.75rem;
+    }
+
+    .contributions-graph {
+        display: none;
+    }
+
+    .github-stats {
+        display: grid;
+    }
+}
+
+@media (max-width: 480px) {
+    .github-section .chart-container {
+        min-height: 220px;
+    }
+
+    .github-contributions {
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .github-stats {
+        gap: 0.75rem;
+    }
+
+    .github-stats .stat-item {
+        padding: 0.875rem;
+    }
+
+    .github-stats .stat-label {
+        font-size: 0.8rem;
+    }
+
+    .github-stats .stat-value {
+        font-size: 1.25rem;
+    }
+}
+
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .github-section .chart-container {
+        min-height: 250px;
+        padding: 1rem;
+    }
+
+    .github-contributions {
+        padding: 1rem;
+        margin-top: 0.75rem;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+
+    .mobile-only {
+        display: block;
+        min-width: unset;
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .github-section .chart-container {
+        min-height: 220px;
+    }
+
+    .github-contributions {
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --header-height: 60px;
+    }
+
+    nav {
+        padding: 0 1rem;
+    }
+
+    .logo {
+        font-size: 1.4rem;
+    }
+
+    .nav-links {
+        gap: 0.75rem;
+    }
+
+    .nav-links a {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    main {
+        padding: calc(var(--header-height) + 1rem) 1rem 1rem;
+    }
+
+    .container {
+        gap: 1.5rem;
+    }
+
+    .content-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.25rem;
+        padding: 1.25rem;
+    }
+
+    .platform-header {
+        padding: 1rem;
+    }
+
+    .platform-logo-wrapper {
+        height: 42px;
+        width: 42px;
+    }
+
+    .platform-logo {
+        height: 42px;
+        width: 42px;
+    }
+
+    .platform-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .metric-header {
+        margin-bottom: 0.75rem;
+    }
+
+    .metric-header h2 {
+        font-size: 1.1rem;
+    }
+
+    .metric-header i {
+        font-size: 1.2rem;
+    }
+
+    .chart-container {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: calc(var(--header-height) + 0.75rem) 0.75rem 0.75rem;
+    }
+
+    .container {
+        gap: 1rem;
+    }
+
+    .content-grid {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .chart-container {
+        padding: 0.875rem;
+    }
+
+    .platform-header {
+        padding: 0.875rem;
+    }
+
+    .platform-logo-wrapper {
+        height: 38px;
+        width: 38px;
+    }
+
+    .platform-logo {
+        height: 38px;
+        width: 38px;
+    }
+
+    .platform-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .metric-header {
+        margin-bottom: 0.625rem;
+    }
+
+    .metric-header h2 {
+        font-size: 1rem;
+    }
+
+    .metric-header i {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .bantee-section .chart-container {
+        min-height: 180px;
+    }
+
+    .stat-display {
+        padding: 1.25rem;
+        height: calc(100% - 45px);
+    }
+
+    .stat-number {
+        font-size: 2.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .bantee-section .chart-container {
+        min-height: 160px;
+    }
+
+    .stat-display {
+        padding: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .strava-section .content-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .strava-section .content-grid {
+        gap: 1.75rem;
+    }
 }
