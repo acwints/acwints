@@ -182,6 +182,19 @@ main {
     color: var(--dark-text);
 }
 
+.goodreads-section .platform-logo-wrapper {
+    background-color: transparent;
+}
+
+.goodreads-section .chart-container {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    height: auto;
+    min-height: 200px;
+}
+
 .bantee-section {
     background: linear-gradient(135deg, #6c9f7e 0%, #8ab89c 100%);
     color: var(--light-text);
@@ -231,19 +244,6 @@ main {
     color: var(--dark-bg);
 }
 
-.goodreads-section .chart-container {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: var(--border-radius);
-    padding: 2rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-    height: auto;
-    min-height: 200px;
-    position: relative;
-    z-index: 0;
-    color: var(--dark-text);
-}
-
 .bantee-section .chart-container {
     background-color: rgba(255, 255, 255, 0.1);
     height: auto;
@@ -253,7 +253,7 @@ main {
 .spotify-section .chart-container {
     padding: 1rem;
     height: auto;
-    min-height: 820px;
+    min-height: 920px;
 }
 
 .spotify-section .metric-header {
@@ -278,34 +278,166 @@ main {
     justify-items: center;
 }
 
-.book-card {
-    width: 150px;
-    text-align: center;
+.book-item {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     transition: transform 0.3s ease;
+    height: 100%;
+    width: 150px;
+}
+
+.book-item:hover {
+    transform: translateY(-5px);
 }
 
 .book-cover {
-    width: 150px;
+    width: 100%;
     height: 225px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    transition: transform 0.3s ease;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.book-cover img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.book-info {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.book-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    color: var(--dark-text);
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.book-author {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.book-rating {
+    color: #f0b000;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.25rem;
+}
+
+.book-date {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+/* Responsive styles for Goodreads section */
+@media (max-width: 1200px) {
+    .books-container {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .book-item {
+        width: 140px;
+    }
+    
+    .book-cover {
+        height: 210px;
+    }
+}
+
+@media (max-width: 992px) {
+    .books-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+    }
+    
+    .book-item {
+        width: 130px;
+    }
+    
+    .book-cover {
+        height: 195px;
+    }
 }
 
 @media (max-width: 768px) {
     .books-container {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
     }
     
-    .book-card {
+    .book-item {
         width: 120px;
     }
     
     .book-cover {
-        width: 120px;
         height: 180px;
+    }
+    
+    .book-title {
+        font-size: 0.85rem;
+    }
+    
+    .book-author {
+        font-size: 0.75rem;
+    }
+
+    .book-rating {
+        font-size: 0.85rem;
+    }
+
+    .book-date {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .books-container {
+        gap: 0.875rem;
+        padding: 0.75rem;
+    }
+    
+    .book-item {
+        padding: 0.75rem;
+        width: 110px;
+    }
+    
+    .book-cover {
+        height: 165px;
+    }
+
+    .book-title {
+        font-size: 0.8rem;
+    }
+    
+    .book-author, 
+    .book-date {
+        font-size: 0.7rem;
+    }
+
+    .book-rating {
+        font-size: 0.8rem;
     }
 }
 
@@ -477,6 +609,7 @@ footer {
     align-items: center;
     transition: transform 0.3s ease;
     height: 100%;
+    text-align: center;
 }
 
 .book-item:not(.empty):hover {
@@ -503,37 +636,27 @@ footer {
 
 .book-info {
     width: 100%;
-    text-align: center;
+    margin-top: 0.5rem;
 }
 
 .book-title {
     font-weight: 600;
     font-size: 0.9rem;
     margin-bottom: 0.25rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    box-orient: vertical;
-    max-height: 2.4em;
+    color: var(--dark-text);
     line-height: 1.2;
 }
 
 .book-author {
     font-size: 0.8rem;
     color: #666;
-    margin-bottom: 0.25rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    margin-bottom: 0.5rem;
 }
 
 .book-rating {
-    color: #ffd700;
+    color: #f0b000;
     font-size: 0.9rem;
-    margin-bottom: 0.25rem;
+    letter-spacing: 2px;
 }
 
 .book-date {
