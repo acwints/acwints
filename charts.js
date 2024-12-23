@@ -393,11 +393,9 @@ function createCharts() {
 function createLocationCalendar() {
     const calendar = document.getElementById('locationCalendar');
     if (!calendar) {
-        console.error('Location calendar element not found');
         return;
     }
 
-    console.log('Creating location calendar');
     // Clear existing content
     calendar.innerHTML = '';
 
@@ -527,25 +525,20 @@ function getLocationDisplay(location) {
 function updateLocationCalendar(dailyLocations) {
     const calendar = document.getElementById('locationCalendar');
     if (!calendar) {
-        console.error('Location calendar element not found');
         return;
     }
-
-    console.log('Updating location calendar with data:', dailyLocations);
 
     // Remove existing tooltips first
     calendar.querySelectorAll('.calendar-tooltip').forEach(tooltip => tooltip.remove());
 
     // Update each day box with location data
     const dayBoxes = calendar.querySelectorAll('.calendar-day:not(.spacer)');
-    console.log('Found day boxes:', dayBoxes.length);
-
+    
     dayBoxes.forEach(box => {
         const date = box.dataset.date;
         const location = dailyLocations[date];
-
+        
         if (location) {
-            console.log(`Updating box for ${date} with location: ${location}`);
             box.classList.add('has-location');
             
             // Remove any existing tooltip and location text

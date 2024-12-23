@@ -4,48 +4,30 @@ const RANGE = 'A:K';  // Columns A through K to get all relevant data
 
 async function loadSheetData() {
     try {
-        console.log('Attempting to load sheet data...');
         const response = await gapi.client.sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
             range: RANGE,
         });
 
-        const values = response.result.values;
+        const values = await response.result.values;
         if (!values) {
-            console.error('No data found in spreadsheet.');
-            return;
+            throw new Error('No data found in spreadsheet.');
         }
 
-        console.log('Raw data loaded:', values.length, 'rows');
-        // Process the data
         const processedData = processSheetData(values);
-        console.log('Processed data:', processedData);
         updateCharts(processedData);
     } catch (err) {
-        console.error('Error loading sheet data:', err);
         document.body.innerHTML += `<div style="color: red; padding: 20px;">Error loading data: ${err.message}</div>`;
     }
 }
 
 function processSheetData(values) {
-    console.log('Processing sheet data...');
     try {
-        // Log the first few rows of raw data to see what we're getting
-        console.log('Raw data structure:');
-        console.log('Total rows:', values.length);
-        console.log('Headers:', JSON.stringify(values[0]));
-        console.log('First row data:', JSON.stringify(values[1]));
-        console.log('Second row data:', JSON.stringify(values[2]));
-
         // Skip header row and process data
         const rawData = values.slice(1).map((row, index) => {
             if (!row[0]) {
-                console.warn('Row missing date:', row);
                 return null;
             }
-
-            // Log entire row for debugging
-            console.log(`Processing row ${index + 1}:`, JSON.stringify(row));
 
             // Extract numeric values from weight and bodyfat
             const weightStr = row[5] || '';  // Column F (index 5) for Weight
@@ -71,9 +53,6 @@ function processSheetData(values) {
 
             // Get location from column B
             const location = row[1] || '';
-            if (location) {
-                console.log(`Found location for ${row[0]}: ${location}`);
-            }
 
             const entry = {
                 date: new Date(row[0]),
@@ -84,18 +63,8 @@ function processSheetData(values) {
                 biking
             };
 
-            console.log('Parsed row:', {
-                date: entry.date,
-                weightStr,
-                weight: entry.weight,
-                bodyfatStr,
-                bodyfat: entry.bodyfat
-            });
-
             return entry;
         }).filter(entry => entry && entry.date.getFullYear() === 2024);
-
-        console.log('Filtered 2024 data:', rawData);
 
         // Group data by month
         const monthlyData = {};
@@ -109,7 +78,7 @@ function processSheetData(values) {
                 bodyfat: [],
                 running: 0,
                 biking: 0,
-                locations: new Set()  // Add a Set to store unique locations
+                locations: new Set()
             };
         }
 
@@ -148,12 +117,9 @@ function processSheetData(values) {
             monthlyData[monthKey].running += entry.running;
             monthlyData[monthKey].biking += entry.biking;
             if (entry.location) {
-                console.log(`Adding location ${entry.location} to month ${monthKey}`);
                 monthlyData[monthKey].locations.add(entry.location);
             }
         });
-
-        console.log('Monthly grouped data:', monthlyData);
 
         // Convert to arrays and calculate averages
         const sortedMonths = Object.keys(monthlyData).sort();
@@ -163,7 +129,6 @@ function processSheetData(values) {
             locations: sortedMonths.map(month => Array.from(monthlyData[month].locations).join(', ')),
             dailyLocations: rawData.reduce((acc, entry) => {
                 if (entry.location) {
-                    console.log(`Adding daily location for ${entry.date.toISOString().split('T')[0]}: ${entry.location}`);
                     acc[entry.date.toISOString().split('T')[0]] = entry.location;
                 }
                 return acc;
@@ -190,30 +155,24 @@ function processSheetData(values) {
             biking: sortedMonths.map(month => parseFloat(monthlyData[month].biking.toFixed(1)))
         };
 
-        console.log('Final processed data:', result);
         return result;
     } catch (error) {
-        console.error('Error processing sheet data:', error);
-        throw error;
+        throw new Error(`Error processing sheet data: ${error.message}`);
     }
 }
 
 function initGoogleApi() {
-    console.log('Initializing Google API...');
     gapi.client.init({
         apiKey: 'AIzaSyAy74FfnNLEs2Yf6xVsmcYWkYEZG93GY6Q',
         discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
     }).then(() => {
-        console.log('Google API initialized successfully');
         loadSheetData();
     }).catch(error => {
-        console.error('Error initializing Google API:', error);
         document.body.innerHTML += `<div style="color: red; padding: 20px;">Error initializing Google API: ${error.message}</div>`;
     });
 }
 
 // Load the Google API client
 function loadGoogleApi() {
-    console.log('Loading Google API...');
     gapi.load('client', initGoogleApi);
 } 
