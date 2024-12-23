@@ -508,8 +508,15 @@ function getLocationDisplay(location) {
         'new york, ny': { text: '', background: '🗽', backgroundColor: '#FFE4E1' },     // light red
         'avon, co': { text: '', background: '🏔️', backgroundColor: '#FFE4B5' },        // light orange
         'berkeley, ca': { text: '', background: '🐻', backgroundColor: '#E6F3FF' },     // light blue
-        'vail, co': { text: '', background: '🏔️' },
-        'beaver creek, co': { text: '', background: '🏔️' }
+        'aspen, co': { text: '', background: '❄️', backgroundColor: '#E6F3FF' },
+        'darien, ct': { text: '', background: '🌊', backgroundColor: '#E6F3FF' },
+        'stamford, ct': { text: '', background: '🌊', backgroundColor: '#E6F3FF' },
+        'portland, me': { text: '', background: '🦞', backgroundColor: '#E6F3FF' },
+        'st. louis, mo': { text: '', background: '🎢', backgroundColor: '#E6F3FF' },
+        'raleigh, nc': { text: '', background: '🦋', backgroundColor: '#E6F3FF' },
+        'austin, tx': { text: '', background: '🤠', backgroundColor: '#E6F3FF' },
+        'st. george, ut': { text: '', background: '🏜️', backgroundColor: '#E6F3FF' },
+        'san diego, ca': { text: '', background: '🏖️', backgroundColor: '#E6F3FF' },
     };
 
     return locationMap[lowercaseLocation] || { text: '', background: '✈️' };
