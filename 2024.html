@@ -17,7 +17,7 @@
             grid-template-columns: auto 1fr;
             gap: 0;
             padding: 16px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             max-width: 1400px;
             margin: 0 auto;
@@ -32,7 +32,6 @@
         }
 
         .calendar-weekday {
-            color: rgba(255, 255, 255, 0.6);
             font-size: 11px;
             display: flex;
             align-items: center;
@@ -50,7 +49,6 @@
             display: grid;
             grid-template-columns: repeat(53, 1fr);
             margin-bottom: 0;
-            color: rgba(255, 255, 255, 0.6);
             font-size: 11px;
             height: 24px;
             align-items: flex-end;
@@ -73,15 +71,15 @@
         }
 
         .calendar-day {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             margin: -1px 0 0 -1px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 10px;
             font-weight: 500;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
@@ -113,11 +111,11 @@
         }
 
         .calendar-day.has-location {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.25);
         }
 
         .calendar-day.has-location:hover {
-            background-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.35);
         }
 
         .location-text {
@@ -161,6 +159,235 @@
         /* Empty corner cell */
         .calendar-corner {
             display: none;
+        }
+
+        /* Add Goodreads specific styles */
+        .goodreads-section {
+            background: linear-gradient(135deg, #4a3600 0%, #755c00 100%);
+            color: var(--light-text);
+        }
+
+        .goodreads-section .chart-container {
+            background-color: rgba(255, 236, 179, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            height: auto;
+            min-height: 300px;
+        }
+
+        .goodreads-section .metric-header {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .goodreads-section .metric-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+        }
+
+        .goodreads-section .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .book-card {
+            display: flex;
+            gap: 1.25rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.25rem;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--light-text);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .book-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .book-cover {
+            width: 110px;
+            min-width: 110px;
+            height: 165px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .book-cover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 100%);
+            pointer-events: none;
+        }
+
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .book-card:hover .book-cover img {
+            transform: scale(1.05);
+        }
+
+        .book-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            flex: 1;
+            min-width: 0;
+            padding: 0.25rem 0;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .book-author {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .book-rating {
+            font-size: 0.95rem;
+            color: #ffd700;
+            letter-spacing: 2px;
+            margin-top: 0.25rem;
+        }
+
+        .book-date {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: auto;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .books-loading {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .books-error {
+            text-align: center;
+            padding: 2rem;
+            color: #ff6b6b;
+            font-size: 1.1rem;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 12px;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .goodreads-section .chart-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .goodreads-section .metric-header {
+                margin-bottom: 1.5rem;
+            }
+
+            .books-grid {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+
+            .book-card {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .book-cover {
+                width: 90px;
+                min-width: 90px;
+                height: 135px;
+            }
+
+            .book-title {
+                font-size: 1.1rem;
+            }
+
+            .book-author {
+                font-size: 0.9rem;
+            }
+
+            .book-rating {
+                font-size: 0.9rem;
+                letter-spacing: 1.5px;
+            }
+
+            .book-date {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .goodreads-section .chart-container {
+                margin: 0.75rem;
+                padding: 1rem;
+            }
+
+            .books-grid {
+                gap: 1rem;
+            }
+
+            .book-card {
+                padding: 0.875rem;
+                gap: 0.875rem;
+            }
+
+            .book-cover {
+                width: 80px;
+                min-width: 80px;
+                height: 120px;
+            }
+
+            .books-loading,
+            .books-error {
+                padding: 1.5rem;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -280,107 +507,23 @@
                             <div class="github-stats">
                                 <div class="stat-item">
                                     <div class="stat-label">Total Contributions</div>
-                                    <div class="stat-value" id="contribution-count">...</div>
+                                    <div class="stat-value">247</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">Unique Active Days</div>
-                                    <div class="stat-value" id="active-days">...</div>
+                                    <div class="stat-value">83</div>
                                 </div>
                                 <div class="stat-item">
                                     <div class="stat-label">Current Active Streak</div>
-                                    <div class="stat-value" id="current-streak">...</div>
+                                    <div class="stat-value">12</div>
                                 </div>
                             </div>
                         </div>
 
-                        <script src="secrets.js"></script>
                         <script>
-                            async function fetchGitHubStats() {
-                                try {
-                                    const username = 'acwints';
-                                    const year = 2024;
-                                    
-                                    // GraphQL query to get contribution data
-                                    const query = `
-                                        query {
-                                            user(login: "${username}") {
-                                                contributionsCollection(from: "${year}-01-01T00:00:00Z", to: "${year}-12-31T23:59:59Z") {
-                                                    totalCommitContributions
-                                                    totalPullRequestContributions
-                                                    totalIssueContributions
-                                                    totalRepositoryContributions
-                                                    contributionCalendar {
-                                                        totalContributions
-                                                        weeks {
-                                                            contributionDays {
-                                                                contributionCount
-                                                                date
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    `;
-
-                                    const response = await fetch('https://api.github.com/graphql', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                                        },
-                                        body: JSON.stringify({ query })
-                                    });
-
-                                    const data = await response.json();
-                                    const contributions = data.data.user.contributionsCollection;
-                                    const calendar = contributions.contributionCalendar;
-
-                                    // Calculate total contributions
-                                    const totalContributions = calendar.totalContributions;
-
-                                    // Calculate active days
-                                    let activeDays = 0;
-                                    calendar.weeks.forEach(week => {
-                                        week.contributionDays.forEach(day => {
-                                            if (day.contributionCount > 0) {
-                                                activeDays++;
-                                            }
-                                        });
-                                    });
-
-                                    // Calculate current streak
-                                    let currentStreak = 0;
-                                    const allDays = calendar.weeks
-                                        .flatMap(week => week.contributionDays)
-                                        .sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                                    if (allDays.length > 0 && allDays[0].contributionCount > 0) {
-                                        currentStreak = 1;
-                                        for (let i = 1; i < allDays.length; i++) {
-                                            if (allDays[i].contributionCount > 0) {
-                                                currentStreak++;
-                                            } else {
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    // Update the display
-                                    document.getElementById('contribution-count').textContent = totalContributions;
-                                    document.getElementById('active-days').textContent = activeDays;
-                                    document.getElementById('current-streak').textContent = `${currentStreak} days`;
-
-                                } catch (error) {
-                                    console.error('Error fetching GitHub stats:', error);
-                                    document.getElementById('contribution-count').textContent = 'N/A';
-                                    document.getElementById('active-days').textContent = 'N/A';
-                                    document.getElementById('current-streak').textContent = 'N/A';
-                                }
-                            }
-
-                            // Call the function when the document loads
-                            document.addEventListener('DOMContentLoaded', fetchGitHubStats);
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Static values are already in place, no need for dynamic fetching
+                            });
                         </script>
                     </div>
                 </div>
@@ -413,228 +556,125 @@
                         <h1>Goodreads</h1>
                     </a>
                 </div>
-                <div class="content-grid" style="grid-template-columns: 1fr;">
-                    <div class="chart-container">
-                        <div class="metric-header">
-                            <i class="fas fa-book"></i>
-                            <h2>2024 Books</h2>
-                        </div>
-
-                        <div class="goodreads-container">
-                            <div class="books-wrapper">
-                                <div class="books-grid" id="books-container">
-                                    <!-- Books will be populated here -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <script>
-                            async function fetchGoodreadsBooks() {
-                                try {
-                                    const corsProxy = 'https://api.allorigins.win/raw?url=';
-                                    const goodreadsUrl = 'https://www.goodreads.com/review/list_rss/112492946?shelf=read&sort=date_read';
-                                    const response = await fetch(corsProxy + encodeURIComponent(goodreadsUrl));
-                                    
-                                    if (!response.ok) {
-                                        throw new Error(`HTTP error! status: ${response.status}`);
-                                    }
-                                    
-                                    const text = await response.text();
-                                    if (!text || text.trim() === '') {
-                                        throw new Error('Empty response from Goodreads');
-                                    }
-
-                                    const parser = new DOMParser();
-                                    const xml = parser.parseFromString(text, 'text/xml');
-                                    
-                                    if (xml.querySelector('parsererror')) {
-                                        throw new Error('Invalid XML response from Goodreads');
-                                    }
-
-                                    const items = xml.querySelectorAll('item');
-                                    if (!items || items.length === 0) {
-                                        throw new Error('No books found in Goodreads feed');
-                                    }
-
-                                    const books = [];
-                                    items.forEach(item => {
-                                        try {
-                                            const title = item.querySelector('title')?.textContent.split(' by ')[0];
-                                            const author = item.querySelector('author_name')?.textContent;
-                                            const rating = parseInt(item.querySelector('user_rating')?.textContent);
-                                            
-                                            
-                                            if (title && author && !isNaN(rating)) {
-                                                books.push({ 
-                                                    title, 
-                                                    author, 
-                                                    rating,
-                                                    
-                                                });
-                                            }
-                                        } catch (e) {
-                                            console.error('Error parsing book:', e);
-                                        }
-                                    });
-
-                                    if (books.length === 0) {
-                                        throw new Error('No books found');
-                                    }
-
-                                    // Sort by read date, most recent first
-                                    books.sort((a, b) => {
-                                        if (!a.readAt) return 1;
-                                        if (!b.readAt) return -1;
-                                        return b.readAt - a.readAt;
-                                    });
-
-                                    // Limit to 10 books for 2 rows of 5
-                                    return books.slice(0, 10);
-                                } catch (error) {
-                                    console.error('Error fetching Goodreads books:', error);
-                                    // Return some static books as fallback
-                                    return [
-                                        { title: "Bad Monkey", author: "Carl Hiaasen", rating: 4 },
-                                        { title: "Awareness", author: "Anthony de Mello", rating: 4 },
-                                        { title: "Caraval", author: "Stephanie Garber", rating: 4 }
-                                    ];
-                                }
-                            }
-
-                            async function fetchBookCover(book) {
-                                try {
-                                    // Clean up the title - remove series numbers and parentheses
-                                    const cleanTitle = book.title
-                                        .replace(/#\d+/, '') // Remove #1, #2, etc.
-                                        .replace(/\(.*?\)/, '') // Remove anything in parentheses
-                                        .replace(/\[.*?\]/, '') // Remove anything in square brackets
-                                        .trim();
-
-                                    // Try different search strategies in order
-                                    const searchStrategies = [
-                                        // 1. Exact title and author
-                                        `intitle:"${cleanTitle}" inauthor:"${book.author}"`,
-                                        // 2. Just the clean title
-                                        `intitle:"${cleanTitle}"`,
-                                        // 3. Original title (in case it's a series book)
-                                        `intitle:"${book.title}"`,
-                                        // 4. Loose title and author match
-                                        `${cleanTitle} ${book.author}`
-                                    ];
-
-                                    // Try each search strategy with Google Books API
-                                    for (const query of searchStrategies) {
-                                        const response = await fetch(
-                                            `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&key=AIzaSyAy74FfnNLEs2Yf6xVsmcYWkYEZG93GY6Q`
-                                        );
-                                        const data = await response.json();
-                                        
-                                        if (data.items?.[0]?.volumeInfo?.imageLinks) {
-                                            const imageLinks = data.items[0].volumeInfo.imageLinks;
-                                            const imageUrl = imageLinks.extraLarge || imageLinks.large || imageLinks.medium || imageLinks.thumbnail;
-                                            return imageUrl.replace('http://', 'https://').replace('zoom=1', 'zoom=2');
-                                        }
-                                    }
-
-                                    // Try OpenLibrary API with different search strategies
-                                    const openLibraryStrategies = [
-                                        `title:"${cleanTitle}" author:"${book.author}"`,
-                                        `title:"${cleanTitle}"`,
-                                        `title:"${book.title}"`,
-                                        `${cleanTitle} ${book.author}`
-                                    ];
-
-                                    for (const query of openLibraryStrategies) {
-                                        const openLibraryResponse = await fetch(
-                                            `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=1`
-                                        );
-                                        const openLibraryData = await openLibraryResponse.json();
-                                        
-                                        if (openLibraryData.docs?.[0]?.cover_i) {
-                                            return `https://covers.openlibrary.org/b/id/${openLibraryData.docs[0].cover_i}-L.jpg`;
-                                        }
-                                    }
-
-                                    // If all strategies fail, return default cover
-                                    return 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop';
-                                } catch {
-                                    return 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop';
-                                }
-                            }
-
-                            function createStarRating(rating) {
-                                return '★'.repeat(rating) + '☆'.repeat(5 - rating);
-                            }
-
-                            async function displayBooks() {
-                                const container = document.getElementById('books-container');
-                                container.innerHTML = '<div class="loading">Loading books...</div>';
-                                
-                                try {
-                                    const books = await fetchGoodreadsBooks();
-                                    const bookPromises = books.map(async (book) => {
-                                        const coverUrl = await fetchBookCover(book);
-                                        return { ...book, coverUrl };
-                                    });
-
-                                    const booksWithCovers = await Promise.all(bookPromises);
-                                    container.innerHTML = '';
-                                    
-                                    if (booksWithCovers.length === 0) {
-                                        container.innerHTML = '<div class="no-books">No books found</div>';
-                                        return;
-                                    }
-
-                                    // Take first 10 books
-                                    const displayBooks = booksWithCovers.slice(0, 10);
-                                    
-                                    // Create all book cards
-                                    displayBooks.forEach(book => {
-                                        const bookCard = document.createElement('div');
-                                        bookCard.className = 'book-item';
-                                        
-                                        const readAtStr = book.readAt ? 
-                                            `<div class="book-date">Read ${book.readAt.toLocaleDateString('en-US', { 
-                                                year: 'numeric', 
-                                                month: 'short', 
-                                                day: 'numeric' 
-                                            })}</div>` : '';
-                                        
-                                        bookCard.innerHTML = `
-                                            <div class="book-cover">
-                                                <img src="${book.coverUrl}" 
-                                                     alt="${book.title}" 
-                                                     loading="lazy"
-                                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop';"
-                                                     style="width: 100%; height: 280px; object-fit: cover; border-radius: 8px;">
-                                            </div>
-                                            <div class="book-info">
-                                                <div class="book-title">${book.title}</div>
-                                                <div class="book-author">by ${book.author}</div>
-                                                <div class="book-rating">${createStarRating(book.rating)}</div>
-                                                ${readAtStr}
-                                            </div>
-                                        `;
-                                        
-                                        container.appendChild(bookCard);
-                                    });
-
-                                    // Add empty placeholders to maintain grid
-                                    const remainingSlots = 10 - displayBooks.length;
-                                    for (let i = 0; i < remainingSlots; i++) {
-                                        const emptyCard = document.createElement('div');
-                                        emptyCard.className = 'book-item empty';
-                                        container.appendChild(emptyCard);
-                                    }
-                                } catch (error) {
-                                    container.innerHTML = `<div class="error">Error loading books: ${error.message}</div>`;
-                                }
-                            }
-
-                            document.addEventListener('DOMContentLoaded', displayBooks);
-                        </script>
+                <div class="chart-container">
+                    <div class="metric-header">
+                        <i class="fas fa-book"></i>
+                        <h2>2024 Reading Challenge</h2>
+                    </div>
+                    <div class="books-grid" id="books-grid">
+                        <!-- Books will be dynamically populated here -->
                     </div>
                 </div>
+
+                <script>
+                    async function fetchGoodreadsBooks() {
+                        try {
+                            const corsProxy = 'https://api.allorigins.win/raw?url=';
+                            const goodreadsUrl = 'https://www.goodreads.com/review/list_rss/112492946?shelf=read&sort=date_read';
+                            const response = await fetch(corsProxy + encodeURIComponent(goodreadsUrl));
+                            
+                            if (!response.ok) {
+                                throw new Error('Failed to fetch books');
+                            }
+                            
+                            const text = await response.text();
+                            const parser = new DOMParser();
+                            const xml = parser.parseFromString(text, 'text/xml');
+                            
+                            if (xml.querySelector('parsererror')) {
+                                throw new Error('Invalid XML response');
+                            }
+
+                            const items = xml.querySelectorAll('item');
+                            const books = Array.from(items).slice(0, 12).map(item => {
+                                const title = item.querySelector('title')?.textContent.split(' by ')[0] || 'Unknown Title';
+                                const author = item.querySelector('author_name')?.textContent || 'Unknown Author';
+                                const rating = parseInt(item.querySelector('user_rating')?.textContent) || 0;
+                                const readAt = new Date(item.querySelector('user_read_at')?.textContent || null);
+                                const bookId = item.querySelector('book_id')?.textContent;
+                                const isbn = item.querySelector('isbn')?.textContent;
+                                const isbn13 = item.querySelector('isbn13')?.textContent;
+                                const imageUrl = item.querySelector('book_large_image_url')?.textContent;
+                                
+                                return {
+                                    title,
+                                    author,
+                                    rating,
+                                    readAt: !isNaN(readAt.getTime()) ? readAt : null,
+                                    goodreadsImageUrl: imageUrl,
+                                    coverUrl: `https://covers.openlibrary.org/b/isbn/${isbn13 || isbn}-M.jpg`,
+                                    openLibraryIdUrl: `https://covers.openlibrary.org/b/id/${bookId}-M.jpg`,
+                                    googleCoverUrl: `https://books.google.com/books/content?vid=isbn${isbn13 || isbn}&printsec=frontcover&img=1&zoom=1`,
+                                    locCoverUrl: `https://covers.loc.gov/index.php?action=thumbnail&isbn=${isbn13 || isbn}&size=large`,
+                                    goodreadsUrl: `https://www.goodreads.com/book/show/${bookId}`
+                                };
+                            });
+
+                            return books;
+                        } catch (error) {
+                            console.error('Error fetching books:', error);
+                            throw error;
+                        }
+                    }
+
+                    function createStarRating(rating) {
+                        return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                    }
+
+                    function formatDate(date) {
+                        if (!date) return '';
+                        return date.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                    }
+
+                    async function displayBooks() {
+                        const container = document.getElementById('books-grid');
+                        container.innerHTML = '<div class="books-loading">Loading your reading list...</div>';
+                        
+                        try {
+                            const books = await fetchGoodreadsBooks();
+                            container.innerHTML = '';
+                            
+                            books.forEach(book => {
+                                const bookCard = document.createElement('a');
+                                bookCard.href = book.goodreadsUrl;
+                                bookCard.target = '_blank';
+                                bookCard.className = 'book-card';
+                                bookCard.rel = 'noopener noreferrer';
+                                
+                                bookCard.innerHTML = `
+                                    <div class="book-cover">
+                                        <img src="${book.goodreadsImageUrl || book.coverUrl}" 
+                                             alt="${book.title} by ${book.author}"
+                                             loading="lazy"
+                                             onerror="this.onerror=null; this.src='${book.openLibraryIdUrl}'; this.onerror=null; this.src='${book.googleCoverUrl}'; this.onerror=null; this.src='${book.locCoverUrl}'; this.onerror=null; this.src='https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop';">
+                                    </div>
+                                    <div class="book-info">
+                                        <h3 class="book-title">${book.title}</h3>
+                                        <p class="book-author">by ${book.author}</p>
+                                        <div class="book-rating" aria-label="${book.rating} out of 5 stars">
+                                            ${createStarRating(book.rating)}
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                container.appendChild(bookCard);
+                            });
+                        } catch (error) {
+                            container.innerHTML = `
+                                <div class="books-error">
+                                    Unable to load books. Please try again later.
+                                </div>
+                            `;
+                        }
+                    }
+
+                    // Initialize the books display when the DOM is ready
+                    document.addEventListener('DOMContentLoaded', displayBooks);
+                </script>
             </section>
 
             <section class="platform-section spotify-section">

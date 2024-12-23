@@ -5,15 +5,13 @@ Personal activity tracking dashboard that integrates with various platforms to v
 ## Setup
 
 1. Clone the repository
-2. Copy `secrets.template.js` to `secrets.js`
-3. Add your API credentials to `secrets.js`
-4. Run a local server:
+2. Run a local server:
    ```bash
    python3 -m http.server
    # or
    npx http-server
    ```
-5. Open http://localhost:8000 in your browser
+3. Open http://localhost:8000 in your browser
 
 ## Features
 
