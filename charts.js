@@ -517,6 +517,8 @@ function getLocationDisplay(location) {
         'austin, tx': { text: '', background: '🤠', backgroundColor: '#E6F3FF' },
         'st. george, ut': { text: '', background: '🏜️', backgroundColor: '#E6F3FF' },
         'san diego, ca': { text: '', background: '🏖️', backgroundColor: '#E6F3FF' },
+        'seattle, wa': { text: '', background: '🛸', backgroundColor: '#E6F3FF' },
+        'olympic peninsula, wa': { text: '', background: '🚴‍♂️', backgroundColor: '#E6F3FF' },
     };
 
     return locationMap[lowercaseLocation] || { text: '', background: '✈️' };
