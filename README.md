@@ -1,39 +1,30 @@
-# ACW Integrations
+# acwints
 
-A web application for tracking and visualizing fitness data using Google Sheets integration.
+Personal activity tracking dashboard that integrates with various platforms to visualize my fitness and health data.
 
 ## Setup
 
-1. Install dependencies:
+1. Clone the repository
+2. Copy `secrets.template.js` to `secrets.js`
+3. Add your API credentials to `secrets.js`
+4. Run a local server:
    ```bash
-   npm install
+   python3 -m http.server
+   # or
+   npx http-server
    ```
+5. Open http://localhost:8000 in your browser
 
-2. Set up Google Sheets API:
-   - Go to Google Cloud Console
-   - Create a new project
-   - Enable Google Sheets API
-   - Create credentials (API key and OAuth 2.0 Client ID)
-   - Copy `secrets.template.js` to `secrets.js`
-   - Add your API credentials to `secrets.js`
+## Features
 
-3. Run the application:
-   ```bash
-   npm run serve
-   ```
+- Strava integration for running and cycling data
+- Withings integration for health metrics
+- GitHub contribution tracking
+- Goodreads reading progress
+- Spotify listening history
+- Bantee golf statistics
 
-4. Open http://localhost:8080 in your browser
+## Deployment
 
-## Building
-
-To build the application:
-```bash
-npm run build
-```
-
-## Development
-
-The application uses:
-- Chart.js for data visualization
-- Google Sheets API for data storage
-- Simple HTTP server for local development
+The site is automatically deployed to GitHub Pages when changes are pushed to the main branch.
+Visit [acwints.com](https://acwints.com) to see it live.

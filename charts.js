@@ -38,6 +38,11 @@ const commonOptions = {
                 return !tooltipItem.dataset.label.includes('Goal');
             },
             callbacks: {
+                afterTitle: function(context) {
+                    const dataIndex = context[0].dataIndex;
+                    const locations = window.chartLocations ? window.chartLocations[dataIndex] : '';
+                    return locations ? `📍 ${locations}` : '';
+                },
                 label: function(context) {
                     let label = context.dataset.label || '';
                     if (context.parsed.y !== null) {
@@ -385,7 +390,214 @@ function createCharts() {
     });
 }
 
+function createLocationCalendar() {
+    const calendar = document.getElementById('locationCalendar');
+    if (!calendar) {
+        console.error('Location calendar element not found');
+        return;
+    }
+
+    console.log('Creating location calendar');
+    // Clear existing content
+    calendar.innerHTML = '';
+
+    // Create weekday column
+    const weekdayColumn = document.createElement('div');
+    weekdayColumn.className = 'weekday-column';
+    
+    // Add weekday labels starting with Monday
+    const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    weekdays.forEach(day => {
+        const dayLabel = document.createElement('div');
+        dayLabel.className = 'calendar-weekday';
+        dayLabel.textContent = day;
+        weekdayColumn.appendChild(dayLabel);
+    });
+    calendar.appendChild(weekdayColumn);
+
+    // Create main calendar section
+    const calendarMain = document.createElement('div');
+    calendarMain.className = 'calendar-main';
+
+    // Create month row
+    const monthRow = document.createElement('div');
+    monthRow.className = 'month-row';
+
+    // Calculate the exact number of weeks needed
+    const startDate = new Date(2024, 0, 1);
+    const endDate = new Date(2024, 11, 31);
+
+    // Create array to hold month positions
+    const monthPositions = [];
+    
+    // Calculate the position and span for each month
+    for (let month = 0; month < 12; month++) {
+        const firstOfMonth = new Date(2024, month, 1);
+        // Calculate which week column this month starts in
+        const weekOffset = Math.floor((firstOfMonth.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+        
+        // Calculate the number of weeks this month spans
+        const lastOfMonth = new Date(2024, month + 1, 0);
+        const weekEnd = Math.floor((lastOfMonth.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+        const weekSpan = weekEnd - weekOffset + 1;
+
+        monthPositions.push({
+            name: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][month],
+            start: weekOffset,
+            span: weekSpan
+        });
+    }
+
+    // Create all week columns for the month row (53 total)
+    for (let week = 0; week < 53; week++) {
+        const monthLabel = document.createElement('div');
+        monthLabel.className = 'month-label';
+        
+        // Find which month this week belongs to
+        const month = monthPositions.find(m => week >= m.start && week < (m.start + m.span));
+        if (month) {
+            // Only show the month name in the middle week of its span
+            const monthMiddle = month.start + Math.floor(month.span / 2);
+            if (week === monthMiddle) {
+                monthLabel.textContent = month.name;
+            }
+        }
+        
+        monthRow.appendChild(monthLabel);
+    }
+    calendarMain.appendChild(monthRow);
+
+    // Create days grid
+    const daysGrid = document.createElement('div');
+    daysGrid.className = 'days-grid';
+
+    // Create the full grid of boxes
+    for (let row = 0; row < 7; row++) {
+        for (let col = 0; col < 53; col++) {
+            const dayBox = document.createElement('div');
+            dayBox.className = 'calendar-day';
+            
+            // Calculate the date for this position
+            const dayOfWeek = row;
+            const currentDate = new Date(startDate);
+            const daysToAdd = (col * 7) + ((dayOfWeek - (startDate.getDay() - 1) + 7) % 7);
+            currentDate.setDate(currentDate.getDate() + daysToAdd);
+
+            // Only add date information if it's within the year
+            if (currentDate >= startDate && currentDate <= endDate) {
+                dayBox.dataset.date = currentDate.toISOString().split('T')[0];
+            } else {
+                dayBox.classList.add('spacer');
+            }
+
+            daysGrid.appendChild(dayBox);
+        }
+    }
+
+    calendarMain.appendChild(daysGrid);
+    calendar.appendChild(calendarMain);
+}
+
+function getLocationDisplay(location) {
+    // Convert to lowercase for case-insensitive matching
+    const lowercaseLocation = location.toLowerCase();
+    
+    // Location mapping
+    const locationMap = {
+        'san francisco, ca': { text: '', background: '🌁', backgroundColor: '#FFFACD' }, // light yellow
+        'new york, ny': { text: '', background: '🗽', backgroundColor: '#FFE4E1' },     // light red
+        'avon, co': { text: '', background: '🏔️', backgroundColor: '#FFE4B5' },        // light orange
+        'berkeley, ca': { text: '', background: '🐻', backgroundColor: '#E6F3FF' },     // light blue
+        'vail, co': { text: '', background: '🏔️' },
+        'beaver creek, co': { text: '', background: '🏔️' }
+    };
+
+    return locationMap[lowercaseLocation] || { text: '', background: '✈️' };
+}
+
+function updateLocationCalendar(dailyLocations) {
+    const calendar = document.getElementById('locationCalendar');
+    if (!calendar) {
+        console.error('Location calendar element not found');
+        return;
+    }
+
+    console.log('Updating location calendar with data:', dailyLocations);
+
+    // Remove existing tooltips first
+    calendar.querySelectorAll('.calendar-tooltip').forEach(tooltip => tooltip.remove());
+
+    // Update each day box with location data
+    const dayBoxes = calendar.querySelectorAll('.calendar-day:not(.spacer)');
+    console.log('Found day boxes:', dayBoxes.length);
+
+    dayBoxes.forEach(box => {
+        const date = box.dataset.date;
+        const location = dailyLocations[date];
+
+        if (location) {
+            console.log(`Updating box for ${date} with location: ${location}`);
+            box.classList.add('has-location');
+            
+            // Remove any existing tooltip and location text
+            box.querySelector('.calendar-tooltip')?.remove();
+            box.querySelector('.location-text')?.remove();
+            
+            // Get the display version of the location
+            const displayLocation = getLocationDisplay(location);
+            
+            // Format the date
+            const tooltipDate = new Date(date + 'T00:00:00');
+            const formattedDate = tooltipDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+                timeZone: 'UTC'
+            });
+
+            // Add tooltip with full location and date
+            const tooltip = document.createElement('div');
+            tooltip.className = 'calendar-tooltip';
+            tooltip.textContent = `${formattedDate} • ${location}`;
+            box.appendChild(tooltip);
+
+            // Add abbreviated location text
+            const locationText = document.createElement('div');
+            locationText.className = 'location-text';
+            locationText.textContent = displayLocation.text;
+            box.appendChild(locationText);
+
+            // Set the background emoji
+            if (displayLocation.background) {
+                box.style.backgroundImage = `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="65%" x="50%" dominant-baseline="middle" text-anchor="middle" font-size="100">${displayLocation.background}</text></svg>')`;
+                box.style.backgroundPosition = 'center';
+                box.style.backgroundSize = 'contain';
+                box.style.backgroundRepeat = 'no-repeat';
+                box.style.border = '1px solid rgba(0, 0, 0, 0.1)';
+                // Apply background color if specified
+                if (displayLocation.backgroundColor) {
+                    box.style.backgroundColor = displayLocation.backgroundColor;
+                }
+            }
+        } else {
+            box.classList.remove('has-location');
+            box.querySelector('.calendar-tooltip')?.remove();
+            box.querySelector('.location-text')?.remove();
+            box.style.backgroundImage = '';
+            box.style.backgroundColor = '';
+            box.style.border = '1px solid rgba(0, 0, 0, 0.5)';
+        }
+    });
+}
+
 function updateCharts(data) {
+    // Store locations globally for tooltip access
+    window.chartLocations = data.locations;
+
+    // Update location calendar
+    updateLocationCalendar(data.dailyLocations);
+
     // Use the actual Date objects for the x-axis
     const dates = data.dates;
 
@@ -437,4 +649,7 @@ function updateCharts(data) {
 }
 
 // Create charts when the page loads
-document.addEventListener('DOMContentLoaded', createCharts); 
+document.addEventListener('DOMContentLoaded', () => {
+    createCharts();
+    createLocationCalendar();
+}); 

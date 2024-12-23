@@ -1,23 +1,19 @@
 {
   "name": "acwints",
   "version": "1.0.0",
-  "main": "charts.js",
+  "description": "Personal activity tracking dashboard",
+  "main": "index.html",
   "scripts": {
-    "build": "node build.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "npx http-server ."
+    "start": "python3 -m http.server"
   },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "spotify-web-api-node": "^5.0.2"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acwints/acwints.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "http-server": "^14.1.1"
-  }
+  "author": "Andrew Winter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/acwints/acwints/issues"
+  },
+  "homepage": "https://github.com/acwints/acwints#readme"
 }

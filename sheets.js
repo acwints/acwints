@@ -30,12 +30,22 @@ async function loadSheetData() {
 function processSheetData(values) {
     console.log('Processing sheet data...');
     try {
+        // Log the first few rows of raw data to see what we're getting
+        console.log('Raw data structure:');
+        console.log('Total rows:', values.length);
+        console.log('Headers:', JSON.stringify(values[0]));
+        console.log('First row data:', JSON.stringify(values[1]));
+        console.log('Second row data:', JSON.stringify(values[2]));
+
         // Skip header row and process data
-        const rawData = values.slice(1).map(row => {
+        const rawData = values.slice(1).map((row, index) => {
             if (!row[0]) {
                 console.warn('Row missing date:', row);
                 return null;
             }
+
+            // Log entire row for debugging
+            console.log(`Processing row ${index + 1}:`, JSON.stringify(row));
 
             // Extract numeric values from weight and bodyfat
             const weightStr = row[5] || '';  // Column F (index 5) for Weight
@@ -59,8 +69,15 @@ function processSheetData(values) {
             const running = row[8] ? parseFloat(row[8]) : 0;
             const biking = row[9] ? parseFloat(row[9]) : 0;
 
+            // Get location from column B
+            const location = row[1] || '';
+            if (location) {
+                console.log(`Found location for ${row[0]}: ${location}`);
+            }
+
             const entry = {
                 date: new Date(row[0]),
+                location,
                 weight,
                 bodyfat,
                 running,
@@ -91,7 +108,8 @@ function processSheetData(values) {
                 weight: [],
                 bodyfat: [],
                 running: 0,
-                biking: 0
+                biking: 0,
+                locations: new Set()  // Add a Set to store unique locations
             };
         }
 
@@ -129,6 +147,10 @@ function processSheetData(values) {
             // For activities, sum up the values
             monthlyData[monthKey].running += entry.running;
             monthlyData[monthKey].biking += entry.biking;
+            if (entry.location) {
+                console.log(`Adding location ${entry.location} to month ${monthKey}`);
+                monthlyData[monthKey].locations.add(entry.location);
+            }
         });
 
         console.log('Monthly grouped data:', monthlyData);
@@ -138,6 +160,14 @@ function processSheetData(values) {
         
         const result = {
             dates: sortedMonths.map(month => monthlyData[month].date),
+            locations: sortedMonths.map(month => Array.from(monthlyData[month].locations).join(', ')),
+            dailyLocations: rawData.reduce((acc, entry) => {
+                if (entry.location) {
+                    console.log(`Adding daily location for ${entry.date.toISOString().split('T')[0]}: ${entry.location}`);
+                    acc[entry.date.toISOString().split('T')[0]] = entry.location;
+                }
+                return acc;
+            }, {}),
             weight: sortedMonths.map(month => {
                 const weights = monthlyData[month].weight;
                 if (weights.length === 0) return null;
