@@ -8,13 +8,15 @@ const PORTFOLIO_DATA = {
             title: 'Software Engineer',
             location: 'San Francisco, CA',
             email: 'andrew@acwints.com',
-            bio: 'Building things on the internet.'
+            bio: 'Building things on the internet.',
+            created_at: 1993
         }
     ],
 
     experience: [
         {
             id: 1,
+            user_id: 1,
             company: 'True Classic',
             role: 'Director, CX & AI/Automations',
             start_date: '2025-01',
@@ -23,6 +25,7 @@ const PORTFOLIO_DATA = {
         },
         {
             id: 2,
+            user_id: 1,
             company: 'Bantee',
             role: 'Cofounder & CTO',
             start_date: '2023-10',
@@ -31,6 +34,7 @@ const PORTFOLIO_DATA = {
         },
         {
             id: 3,
+            user_id: 1,
             company: 'Kahani',
             role: 'GTM Strategic Growth Lead',
             start_date: '2022-10',
@@ -39,6 +43,7 @@ const PORTFOLIO_DATA = {
         },
         {
             id: 4,
+            user_id: 1,
             company: 'Immeasurable',
             role: 'Software Engineer',
             start_date: '2021-05',
@@ -47,6 +52,7 @@ const PORTFOLIO_DATA = {
         },
         {
             id: 5,
+            user_id: 1,
             company: 'Winter Advisory',
             role: 'Founder/Owner',
             start_date: '2020-07',
@@ -55,6 +61,7 @@ const PORTFOLIO_DATA = {
         },
         {
             id: 6,
+            user_id: 1,
             company: 'ClassPass',
             role: 'Program Manager, Pricing & Inventory',
             start_date: '2018-04',
@@ -63,6 +70,7 @@ const PORTFOLIO_DATA = {
         },
         {
             id: 7,
+            user_id: 1,
             company: 'ClassPass',
             role: 'Customer Experience',
             start_date: '2016-07',
@@ -71,6 +79,7 @@ const PORTFOLIO_DATA = {
         },
         {
             id: 8,
+            user_id: 1,
             company: 'S&P Global',
             role: 'Product Analyst, FIG',
             start_date: '2015-07',
@@ -82,42 +91,49 @@ const PORTFOLIO_DATA = {
     projects: [
         {
             id: 1,
+            user_id: 1,
             name: 'Bantee',
             description: 'Strava for Golf',
             url: 'https://banteegolf.com'
         },
         {
             id: 2,
+            user_id: 1,
             name: 'Winter Advisory',
             description: 'AI Consulting',
             url: 'https://winteradvisory.llc'
         },
         {
             id: 3,
+            user_id: 1,
             name: 'Stravawesome',
             description: 'Web App',
             url: 'https://stravawesome.com'
         },
         {
             id: 4,
+            user_id: 1,
             name: 'Klavyflow',
             description: 'Ecommerce Marketing Tool',
             url: 'https://klavyflow.com'
         },
         {
             id: 5,
+            user_id: 1,
             name: 'Suppstack',
             description: 'Supplement Tracking',
             url: 'https://suppstack.app'
         },
         {
             id: 6,
+            user_id: 1,
             name: 'FairwayToGreen',
             description: 'Client Website',
             url: 'https://fairwaytogreen.com'
         },
         {
             id: 7,
+            user_id: 1,
             name: 'College Sports Co',
             description: 'Client Website',
             url: 'https://collegesportsco.com'
@@ -127,44 +143,49 @@ const PORTFOLIO_DATA = {
     education: [
         {
             id: 1,
+            user_id: 1,
             school: 'UC Berkeley Haas',
             degree: 'MBA'
         },
         {
             id: 2,
+            user_id: 1,
             school: 'Washington and Lee',
             degree: 'BA - Economics'
         }
     ],
 
     skills: [
-        { id: 1, name: 'SQL' },
-        { id: 2, name: 'Python' },
-        { id: 3, name: 'HTML & CSS' },
-        { id: 4, name: 'Flutter' },
-        { id: 5, name: 'Cursor' },
-        { id: 6, name: 'Claude Code' },
-        { id: 7, name: 'Excel & GSheets' },
-        { id: 8, name: 'APIs & Automations/Scripts' },
-        { id: 9, name: 'React' },
-        { id: 10, name: 'TypeScript' }
+        { id: 1, user_id: 1, name: 'SQL' },
+        { id: 2, user_id: 1, name: 'Python' },
+        { id: 3, user_id: 1, name: 'HTML & CSS' },
+        { id: 4, user_id: 1, name: 'Flutter' },
+        { id: 5, user_id: 1, name: 'Cursor' },
+        { id: 6, user_id: 1, name: 'Claude Code' },
+        { id: 7, user_id: 1, name: 'Excel & GSheets' },
+        { id: 8, user_id: 1, name: 'APIs & Automations/Scripts' },
+        { id: 9, user_id: 1, name: 'React' },
+        { id: 10, user_id: 1, name: 'TypeScript' }
     ],
 
     social_links: [
         {
             id: 1,
+            user_id: 1,
             platform: 'LinkedIn',
             url: 'https://linkedin.com/in/andrew-clark-winter',
             username: 'andrew-clark-winter'
         },
         {
             id: 2,
+            user_id: 1,
             platform: 'Twitter',
             url: 'https://x.com/acwints',
             username: '@acwints'
         },
         {
             id: 3,
+            user_id: 1,
             platform: 'GitHub',
             url: 'https://github.com/acwints',
             username: 'acwints'

@@ -10,43 +10,43 @@ const QUERIES = [
         displayFormat: 'vertical'
     },
     {
-        sql: 'SELECT * FROM experience ORDER BY start_date DESC;',
+        sql: 'SELECT * FROM experience WHERE user_id = 1 ORDER BY start_date DESC;',
         name: 'Experience',
         title: 'EXPERIENCE',
         chartType: 'experience',
-        actualSql: 'SELECT company, role, start_date, end_date FROM experience ORDER BY start_date DESC;',
+        actualSql: 'SELECT company, role, start_date, end_date FROM experience WHERE user_id = 1 ORDER BY start_date DESC;',
         displayFormat: 'table'
     },
     {
-        sql: 'SELECT * FROM education;',
+        sql: 'SELECT * FROM education WHERE user_id = 1;',
         name: 'Education',
         title: 'EDUCATION',
         chartType: null,
-        actualSql: 'SELECT school, degree FROM education;',
+        actualSql: 'SELECT school, degree FROM education WHERE user_id = 1;',
         displayFormat: 'table'
     },
     {
-        sql: 'SELECT * FROM projects;',
+        sql: 'SELECT * FROM projects WHERE user_id = 1;',
         name: 'Projects',
         title: 'PROJECTS',
         chartType: null,
-        actualSql: 'SELECT name, description, url FROM projects;',
+        actualSql: 'SELECT name, description, url FROM projects WHERE user_id = 1;',
         displayFormat: 'table'
     },
     {
-        sql: 'SELECT * FROM skills;',
+        sql: 'SELECT * FROM skills WHERE user_id = 1;',
         name: 'Skills',
         title: 'SKILLS',
         chartType: null,
-        actualSql: 'SELECT name FROM skills;',
+        actualSql: 'SELECT name FROM skills WHERE user_id = 1;',
         displayFormat: 'table'
     },
     {
-        sql: 'SELECT * FROM social_links;',
+        sql: 'SELECT * FROM social_links WHERE user_id = 1;',
         name: 'Connect',
         title: 'CONNECT',
         chartType: null,
-        actualSql: 'SELECT platform, url FROM social_links;',
+        actualSql: 'SELECT platform, url FROM social_links WHERE user_id = 1;',
         displayFormat: 'table'
     }
 ];
