@@ -494,7 +494,7 @@ function updateChart(chartType) {
         userPhotoContainer.innerHTML = '';
 
         const img = document.createElement('img');
-        img.src = 'andrew.jpg';
+        img.src = 'andrew.jpeg';
         img.alt = 'Andrew Winter';
         img.style.cssText = 'height: 100%; max-height: 180px; width: auto; object-fit: contain; border-radius: 8px;';
         userPhotoContainer.appendChild(img);
