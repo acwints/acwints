@@ -51,7 +51,8 @@ async function initDatabase() {
             id INTEGER PRIMARY KEY,
             user_id INTEGER,
             school TEXT,
-            degree TEXT
+            degree TEXT,
+            year INTEGER
         )
     `);
 
@@ -109,10 +110,10 @@ function seedDatabase() {
 
     // Insert education
     const eduStmt = db.prepare(
-        'INSERT INTO education (id, user_id, school, degree) VALUES (?, ?, ?, ?)'
+        'INSERT INTO education (id, user_id, school, degree, year) VALUES (?, ?, ?, ?, ?)'
     );
     PORTFOLIO_DATA.education.forEach(e => {
-        eduStmt.run([e.id, e.user_id, e.school, e.degree]);
+        eduStmt.run([e.id, e.user_id, e.school, e.degree, e.year]);
     });
     eduStmt.free();
 

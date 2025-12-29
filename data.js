@@ -5,11 +5,11 @@ const PORTFOLIO_DATA = {
         {
             id: 1,
             name: 'Andrew Winter',
-            title: 'Software Engineer',
+            created_at: 1993,
+            title: 'Product & GTM Leader',
             location: 'San Francisco, CA',
             email: 'andrew@acwints.com',
-            bio: 'Building things on the internet.',
-            created_at: 1993
+            bio: 'Building cool things with AI',
         }
     ],
 
@@ -45,7 +45,7 @@ const PORTFOLIO_DATA = {
             id: 4,
             user_id: 1,
             company: 'Immeasurable',
-            role: 'Software Engineer',
+            role: 'Investor & Chief of Staff',
             start_date: '2021-05',
             end_date: '2022-10',
             description: 'Analytics platform'
@@ -144,14 +144,18 @@ const PORTFOLIO_DATA = {
         {
             id: 1,
             user_id: 1,
-            school: 'UC Berkeley Haas',
-            degree: 'MBA'
+            school: 'UC Berkeley, Haas School of Business',
+            degree: 'MBA',
+            year: 2026,
+            logo: 'haas-logo.png'
         },
         {
             id: 2,
             user_id: 1,
-            school: 'Washington and Lee',
-            degree: 'BA - Economics'
+            school: 'Washington & Lee University',
+            degree: 'BA, Economics',
+            year: 2015,
+            logo: 'wl-logo.jpg'
         }
     ],
 

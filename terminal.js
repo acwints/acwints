@@ -21,8 +21,8 @@ const QUERIES = [
         sql: 'SELECT * FROM education WHERE user_id = 1;',
         name: 'Education',
         title: 'EDUCATION',
-        chartType: null,
-        actualSql: 'SELECT school, degree FROM education WHERE user_id = 1;',
+        chartType: 'education',
+        actualSql: 'SELECT school, degree, year FROM education WHERE user_id = 1;',
         displayFormat: 'table'
     },
     {
@@ -271,6 +271,12 @@ function updateChart(chartType) {
         currentChart = null;
     }
 
+    // Hide education logos if they exist
+    const logosContainer = document.getElementById('education-logos');
+    if (logosContainer) {
+        logosContainer.style.display = 'none';
+    }
+
     if (!chartType) {
         chartCanvas.style.display = 'none';
         return;
@@ -467,6 +473,39 @@ function updateChart(chartType) {
                 barPercentage: 0.9,
                 categoryPercentage: 0.9
             }
+        });
+    } else if (chartType === 'education') {
+        // Display education logos instead of a chart
+        chartCanvas.style.display = 'none';
+        const chartArea = document.getElementById('chart-area');
+
+        // Create logos container
+        let logosContainer = document.getElementById('education-logos');
+        if (!logosContainer) {
+            logosContainer = document.createElement('div');
+            logosContainer.id = 'education-logos';
+            logosContainer.style.cssText = 'display: flex; justify-content: center; align-items: center; gap: 3rem; height: 100%;';
+            chartArea.appendChild(logosContainer);
+        }
+        logosContainer.style.display = 'flex';
+        logosContainer.innerHTML = '';
+
+        PORTFOLIO_DATA.education.forEach(edu => {
+            const logoWrapper = document.createElement('div');
+            logoWrapper.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 0.5rem;';
+
+            const img = document.createElement('img');
+            img.src = edu.logo;
+            img.alt = edu.school;
+            img.style.cssText = 'height: 80px; width: auto; object-fit: contain;';
+
+            const label = document.createElement('span');
+            label.textContent = edu.year;
+            label.style.cssText = 'font-size: 0.75rem; color: #6c757d; font-family: var(--font-mono);';
+
+            logoWrapper.appendChild(img);
+            logoWrapper.appendChild(label);
+            logosContainer.appendChild(logoWrapper);
         });
     }
 }
