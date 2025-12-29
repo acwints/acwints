@@ -18,6 +18,14 @@ const QUERIES = [
         displayFormat: 'table'
     },
     {
+        sql: 'SELECT * FROM education;',
+        name: 'Education',
+        title: 'EDUCATION',
+        chartType: null,
+        actualSql: 'SELECT school, degree FROM education;',
+        displayFormat: 'table'
+    },
+    {
         sql: 'SELECT * FROM projects;',
         name: 'Projects',
         title: 'PROJECTS',

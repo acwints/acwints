@@ -44,6 +44,14 @@ async function initDatabase() {
     `);
 
     db.run(`
+        CREATE TABLE education (
+            id INTEGER PRIMARY KEY,
+            school TEXT,
+            degree TEXT
+        )
+    `);
+
+    db.run(`
         CREATE TABLE skills (
             id INTEGER PRIMARY KEY,
             name TEXT
@@ -92,6 +100,15 @@ function seedDatabase() {
         projStmt.run([p.id, p.name, p.description, p.url]);
     });
     projStmt.free();
+
+    // Insert education
+    const eduStmt = db.prepare(
+        'INSERT INTO education (id, school, degree) VALUES (?, ?, ?)'
+    );
+    PORTFOLIO_DATA.education.forEach(e => {
+        eduStmt.run([e.id, e.school, e.degree]);
+    });
+    eduStmt.free();
 
     // Insert skills
     const skillStmt = db.prepare(

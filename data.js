@@ -124,6 +124,19 @@ const PORTFOLIO_DATA = {
         }
     ],
 
+    education: [
+        {
+            id: 1,
+            school: 'UC Berkeley Haas',
+            degree: 'MBA'
+        },
+        {
+            id: 2,
+            school: 'Washington and Lee',
+            degree: 'BA - Economics'
+        }
+    ],
+
     skills: [
         { id: 1, name: 'SQL' },
         { id: 2, name: 'Python' },
