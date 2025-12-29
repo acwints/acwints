@@ -6,7 +6,7 @@ const QUERIES = [
         sql: 'SELECT * FROM users;',
         name: 'About',
         title: 'ABOUT',
-        chartType: null,
+        chartType: 'user',
         displayFormat: 'vertical'
     },
     {
@@ -271,10 +271,14 @@ function updateChart(chartType) {
         currentChart = null;
     }
 
-    // Hide education logos if they exist
+    // Hide custom containers if they exist
     const logosContainer = document.getElementById('education-logos');
     if (logosContainer) {
         logosContainer.style.display = 'none';
+    }
+    const userPhotoContainer = document.getElementById('user-photo');
+    if (userPhotoContainer) {
+        userPhotoContainer.style.display = 'none';
     }
 
     if (!chartType) {
@@ -474,6 +478,26 @@ function updateChart(chartType) {
                 categoryPercentage: 0.9
             }
         });
+    } else if (chartType === 'user') {
+        // Display user photo
+        chartCanvas.style.display = 'none';
+        const chartArea = document.getElementById('chart-area');
+
+        let userPhotoContainer = document.getElementById('user-photo');
+        if (!userPhotoContainer) {
+            userPhotoContainer = document.createElement('div');
+            userPhotoContainer.id = 'user-photo';
+            userPhotoContainer.style.cssText = 'display: flex; justify-content: center; align-items: center; height: 100%;';
+            chartArea.appendChild(userPhotoContainer);
+        }
+        userPhotoContainer.style.display = 'flex';
+        userPhotoContainer.innerHTML = '';
+
+        const img = document.createElement('img');
+        img.src = 'andrew.jpg';
+        img.alt = 'Andrew Winter';
+        img.style.cssText = 'height: 100%; max-height: 180px; width: auto; object-fit: contain; border-radius: 8px;';
+        userPhotoContainer.appendChild(img);
     } else if (chartType === 'education') {
         // Display education logos instead of a chart
         chartCanvas.style.display = 'none';
