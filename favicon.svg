@@ -1,10 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <rect width="32" height="32" fill="#0d2240"/>
-  <text x="16" y="22"
-        font-family="'Brush Script MT', 'Segoe Script', cursive"
-        font-size="14"
+  <text font-family="'Brush Script MT', 'Segoe Script', cursive"
+        font-size="12"
         font-weight="400"
         fill="#ffffff"
-        text-anchor="middle"
-        transform="rotate(45, 16, 16)">ACW</text>
+        text-anchor="middle">
+    <tspan x="6" y="10">A</tspan>
+    <tspan x="16" y="20">C</tspan>
+    <tspan x="26" y="30">W</tspan>
+  </text>
 </svg>
