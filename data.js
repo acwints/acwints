@@ -147,7 +147,7 @@ const PORTFOLIO_DATA = {
             school: 'UC Berkeley, Haas School of Business',
             degree: 'MBA',
             year: 2026,
-            logo: 'haas-logo.png'
+            logo: 'haas_logo.png'
         },
         {
             id: 2,
@@ -155,7 +155,7 @@ const PORTFOLIO_DATA = {
             school: 'Washington & Lee University',
             degree: 'BA, Economics',
             year: 2015,
-            logo: 'wl-logo.jpg'
+            logo: 'wl_logo.jpg'
         }
     ],
 
