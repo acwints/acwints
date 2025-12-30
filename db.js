@@ -60,6 +60,7 @@ async function initDatabase() {
         CREATE TABLE skills (
             id INTEGER PRIMARY KEY,
             user_id INTEGER,
+            category TEXT,
             name TEXT
         )
     `);
@@ -119,10 +120,10 @@ function seedDatabase() {
 
     // Insert skills
     const skillStmt = db.prepare(
-        'INSERT INTO skills (id, user_id, name) VALUES (?, ?, ?)'
+        'INSERT INTO skills (id, user_id, category, name) VALUES (?, ?, ?, ?)'
     );
     PORTFOLIO_DATA.skills.forEach(s => {
-        skillStmt.run([s.id, s.user_id, s.name]);
+        skillStmt.run([s.id, s.user_id, s.category, s.name]);
     });
     skillStmt.free();
 
