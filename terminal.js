@@ -521,7 +521,7 @@ function updateChart(chartType) {
             const img = document.createElement('img');
             img.src = edu.logo;
             img.alt = edu.school;
-            img.style.cssText = 'height: 80px; width: auto; object-fit: contain;';
+            img.style.cssText = 'height: 80px; width: auto; object-fit: contain; border: 1px solid #e9ecef; border-radius: 8px; padding: 8px;';
 
             const label = document.createElement('span');
             label.textContent = edu.year;
