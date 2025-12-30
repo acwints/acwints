@@ -160,16 +160,36 @@ const PORTFOLIO_DATA = {
     ],
 
     skills: [
-        { id: 1, user_id: 1, name: 'SQL' },
-        { id: 2, user_id: 1, name: 'Python' },
-        { id: 3, user_id: 1, name: 'HTML & CSS' },
-        { id: 4, user_id: 1, name: 'Flutter' },
-        { id: 5, user_id: 1, name: 'Cursor' },
-        { id: 6, user_id: 1, name: 'Claude Code' },
-        { id: 7, user_id: 1, name: 'Excel & GSheets' },
-        { id: 8, user_id: 1, name: 'APIs & Automations/Scripts' },
-        { id: 9, user_id: 1, name: 'React' },
-        { id: 10, user_id: 1, name: 'TypeScript' }
+        // Technical
+        { id: 1, user_id: 1, category: 'Technical', name: 'SQL' },
+        { id: 2, user_id: 1, category: 'Technical', name: 'Python' },
+        { id: 3, user_id: 1, category: 'Technical', name: 'HTML & CSS' },
+        { id: 4, user_id: 1, category: 'Technical', name: 'Flutter' },
+        { id: 5, user_id: 1, category: 'Technical', name: 'Excel & GSheets' },
+        { id: 6, user_id: 1, category: 'Technical', name: 'APIs & Automations' },
+        { id: 7, user_id: 1, category: 'Technical', name: 'React' },
+        { id: 8, user_id: 1, category: 'Technical', name: 'TypeScript' },
+        // AI
+        { id: 9, user_id: 1, category: 'AI', name: 'Claude Code' },
+        { id: 10, user_id: 1, category: 'AI', name: 'Cursor' },
+        { id: 11, user_id: 1, category: 'AI', name: 'Nano Banana' },
+        { id: 12, user_id: 1, category: 'AI', name: 'Training' },
+        // Business
+        { id: 13, user_id: 1, category: 'Business', name: 'Modeling' },
+        { id: 14, user_id: 1, category: 'Business', name: 'Sales' },
+        { id: 15, user_id: 1, category: 'Business', name: 'Strategy' },
+        { id: 16, user_id: 1, category: 'Business', name: 'Pricing' },
+        { id: 17, user_id: 1, category: 'Business', name: 'Business Model' },
+        // Leadership
+        { id: 18, user_id: 1, category: 'Leadership', name: 'Management' },
+        { id: 19, user_id: 1, category: 'Leadership', name: 'Coaching' },
+        { id: 20, user_id: 1, category: 'Leadership', name: 'Growth' },
+        { id: 21, user_id: 1, category: 'Leadership', name: 'Resourcing' },
+        // Investing
+        { id: 22, user_id: 1, category: 'Investing', name: 'Sourcing' },
+        { id: 23, user_id: 1, category: 'Investing', name: 'Diligence' },
+        { id: 24, user_id: 1, category: 'Investing', name: 'Fundraising' },
+        { id: 25, user_id: 1, category: 'Investing', name: 'Writing' }
     ],
 
     social_links: [

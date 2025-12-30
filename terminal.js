@@ -38,8 +38,8 @@ const QUERIES = [
         name: 'Skills',
         title: 'SKILLS',
         chartType: null,
-        actualSql: 'SELECT name FROM skills WHERE user_id = 1;',
-        displayFormat: 'table'
+        actualSql: 'SELECT category, name FROM skills WHERE user_id = 1 ORDER BY category;',
+        displayFormat: 'pivot'
     },
     {
         sql: 'SELECT * FROM social_links WHERE user_id = 1;',
@@ -218,6 +218,51 @@ function formatResults(results, title, displayFormat) {
         });
         table.appendChild(tbody);
         container.appendChild(table);
+    } else if (displayFormat === 'pivot') {
+        // Pivot table format - group by first column (category)
+        const categoryIndex = 0;
+        const nameIndex = 1;
+        const categories = {};
+
+        // Group values by category
+        values.forEach(row => {
+            const category = row[categoryIndex];
+            const name = row[nameIndex];
+            if (!categories[category]) {
+                categories[category] = [];
+            }
+            categories[category].push(name);
+        });
+
+        // Create pivot table
+        const pivotContainer = document.createElement('div');
+        pivotContainer.className = 'pivot-table';
+        pivotContainer.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem;';
+
+        Object.keys(categories).forEach((category, catIndex) => {
+            const categoryCol = document.createElement('div');
+            categoryCol.className = 'pivot-column';
+            categoryCol.style.cssText = 'animation: recordFadeIn 0.3s ease-out forwards; opacity: 0;';
+            categoryCol.style.animationDelay = `${catIndex * 0.05}s`;
+
+            const categoryHeader = document.createElement('div');
+            categoryHeader.className = 'pivot-header';
+            categoryHeader.style.cssText = 'font-weight: 600; color: #0d2240; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding-bottom: 0.75rem; border-bottom: 2px solid #0d2240; margin-bottom: 0.75rem;';
+            categoryHeader.textContent = category;
+            categoryCol.appendChild(categoryHeader);
+
+            categories[category].forEach((skill, skillIndex) => {
+                const skillItem = document.createElement('div');
+                skillItem.className = 'pivot-item';
+                skillItem.style.cssText = 'padding: 0.4rem 0; color: #0d2240; font-size: 0.85rem; border-bottom: 1px solid #e9ecef;';
+                skillItem.textContent = skill;
+                categoryCol.appendChild(skillItem);
+            });
+
+            pivotContainer.appendChild(categoryCol);
+        });
+
+        container.appendChild(pivotContainer);
     } else {
         // Vertical key-value format (for About/single record)
         values.forEach((row, rowIndex) => {
