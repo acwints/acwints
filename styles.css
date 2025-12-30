@@ -509,18 +509,37 @@ body {
 
 /* Responsive */
 @media (max-width: 1024px) {
+    html, body {
+        height: auto;
+        overflow: auto;
+    }
+
+    body {
+        min-height: 100vh;
+    }
+
     .layout {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
+        grid-template-rows: auto auto;
+        flex: none;
     }
 
     .terminal-panel {
         border-right: none;
         border-bottom: 1px solid var(--gray-light);
+        overflow: visible;
+    }
+
+    .results-panel {
+        overflow: visible;
+    }
+
+    .results-area {
+        overflow: visible;
     }
 
     .chart-area {
-        height: 180px;
+        height: auto;
         min-height: 180px;
     }
 }
