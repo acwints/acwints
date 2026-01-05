@@ -98,13 +98,13 @@ const PORTFOLIO_DATA = {
             id: 3,
             user_id: 1,
             name: 'Stravawesome',
-            description: 'Web App',
+            description: 'Strava Companion Tool',
             url: 'https://stravawesome.com'
         },
         {
             id: 4,
             user_id: 1,
-            name: 'Klavyflow',
+            name: 'KlavyFlow',
             description: 'Ecommerce Marketing Tool',
             url: 'https://klavyflow.com'
         },
