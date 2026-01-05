@@ -29,7 +29,7 @@ const PORTFOLIO_DATA = {
             company: 'Bantee',
             role: 'Cofounder & CTO',
             start_date: '2023-10',
-            end_date: 'Present',
+            end_date: '2025-01',
             description: 'Golf performance platform'
         },
         {
@@ -49,15 +49,6 @@ const PORTFOLIO_DATA = {
             start_date: '2021-05',
             end_date: '2022-10',
             description: 'Analytics platform'
-        },
-        {
-            id: 5,
-            user_id: 1,
-            company: 'Winter Advisory',
-            role: 'Founder/Owner',
-            start_date: '2020-07',
-            end_date: 'Present',
-            description: 'Technical consulting'
         },
         {
             id: 6,
@@ -129,7 +120,7 @@ const PORTFOLIO_DATA = {
             user_id: 1,
             name: 'FairwayToGreen',
             description: 'Client Website',
-            url: 'https://fairwaytogreen.com'
+            url: 'https://fairwaytogreen.vercel.app/'
         },
         {
             id: 7,
@@ -166,14 +157,14 @@ const PORTFOLIO_DATA = {
         { id: 3, user_id: 1, category: 'Technical', name: 'HTML & CSS' },
         { id: 4, user_id: 1, category: 'Technical', name: 'Flutter' },
         { id: 5, user_id: 1, category: 'Technical', name: 'Excel & GSheets' },
-        { id: 6, user_id: 1, category: 'Technical', name: 'APIs & Automations' },
         { id: 7, user_id: 1, category: 'Technical', name: 'React' },
         { id: 8, user_id: 1, category: 'Technical', name: 'TypeScript' },
         // AI
         { id: 9, user_id: 1, category: 'AI', name: 'Claude Code' },
         { id: 10, user_id: 1, category: 'AI', name: 'Cursor' },
         { id: 11, user_id: 1, category: 'AI', name: 'Nano Banana' },
-        { id: 12, user_id: 1, category: 'AI', name: 'Training' },
+        { id: 6, user_id: 1, category: 'AI', name: 'APIs & Automations' },
+        { id: 6, user_id: 1, category: 'AI', name: 'Custom Scripts' },
         // Business
         { id: 13, user_id: 1, category: 'Business', name: 'Modeling' },
         { id: 14, user_id: 1, category: 'Business', name: 'Sales' },
@@ -185,6 +176,7 @@ const PORTFOLIO_DATA = {
         { id: 19, user_id: 1, category: 'Leadership', name: 'Coaching' },
         { id: 20, user_id: 1, category: 'Leadership', name: 'Growth' },
         { id: 21, user_id: 1, category: 'Leadership', name: 'Resourcing' },
+        { id: 12, user_id: 1, category: 'Leadership', name: 'Training' },
         // Investing
         { id: 22, user_id: 1, category: 'Investing', name: 'Sourcing' },
         { id: 23, user_id: 1, category: 'Investing', name: 'Diligence' },
