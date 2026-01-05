@@ -164,7 +164,7 @@ const PORTFOLIO_DATA = {
         { id: 10, user_id: 1, category: 'AI', name: 'Cursor' },
         { id: 11, user_id: 1, category: 'AI', name: 'Nano Banana' },
         { id: 6, user_id: 1, category: 'AI', name: 'APIs & Automations' },
-        { id: 6, user_id: 1, category: 'AI', name: 'Custom Scripts' },
+        { id: 26, user_id: 1, category: 'AI', name: 'Custom Scripts' },
         // Business
         { id: 13, user_id: 1, category: 'Business', name: 'Modeling' },
         { id: 14, user_id: 1, category: 'Business', name: 'Sales' },
