@@ -5,13 +5,17 @@ Personal activity tracking dashboard that integrates with various platforms to v
 ## Setup
 
 1. Clone the repository
-2. Run a local server:
+2. **GitHub stats (optional)** – To show languages from public + private repos:
+   - Create a [Personal Access Token](https://github.com/settings/tokens) with `repo` scope
+   - Add it as a repo secret: `Settings → Secrets → Actions → New repository secret` named `GH_STATS_TOKEN`
+   - Run the "Update GitHub stats" workflow manually (Actions tab) or wait for the daily schedule
+3. Run a local server:
    ```bash
    python3 -m http.server
    # or
    npx http-server
    ```
-3. Open http://localhost:8000 in your browser
+4. Open http://localhost:8000 in your browser
 
 ## Features
 

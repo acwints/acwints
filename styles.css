@@ -428,6 +428,61 @@ body {
     display: block;
 }
 
+.code-languages-wrap {
+    margin-top: 1rem;
+}
+
+.code-languages {
+    border: 1px solid var(--gray-light);
+    border-radius: 8px;
+    background: var(--off-white);
+    padding: 0.75rem 1rem;
+}
+
+.code-lang-title {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+}
+
+.code-lang-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 60px;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.75rem;
+    padding: 0.25rem 0;
+}
+
+.code-lang-name {
+    font-weight: 500;
+    color: var(--navy);
+}
+
+.code-lang-bar-wrap {
+    height: 8px;
+    background: var(--gray-light);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.code-lang-bar {
+    display: block;
+    height: 100%;
+    background: var(--navy);
+    border-radius: 4px;
+    min-width: 2px;
+}
+
+.code-lang-value {
+    font-size: 0.7rem;
+    color: var(--gray);
+    text-align: right;
+}
+
 .code-disclaimer {
     color: var(--gray);
     font-size: 0.72rem;

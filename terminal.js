@@ -69,10 +69,6 @@ const resultsContent = document.getElementById('results-content');
 const chartCanvas = document.getElementById('main-chart');
 const chartArea = document.getElementById('chart-area');
 
-const GITHUB_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
-const GITHUB_SUMMARY_CACHE_KEY = 'acwints_code_weekly_summary_v1';
-const GITHUB_ONE_YEAR_WEEKS = 52;
-
 // Initialize
 async function init() {
     renderQueryList();
@@ -341,262 +337,41 @@ function getGithubUsername() {
     }
 }
 
-function getLastYearDateRange() {
-    const end = new Date();
-    const start = new Date(end);
-    start.setFullYear(end.getFullYear() - 1);
-    const toISO = end.toISOString().slice(0, 10);
-    const fromISO = start.toISOString().slice(0, 10);
-    return { fromISO, toISO };
+function formatBytes(bytes) {
+    if (bytes >= 1e6) return (bytes / 1e6).toFixed(1) + 'M';
+    if (bytes >= 1e3) return (bytes / 1e3).toFixed(1) + 'K';
+    return String(bytes);
 }
 
-function getWeekStart(dateLike) {
-    const date = new Date(dateLike);
-    date.setHours(0, 0, 0, 0);
-    const day = date.getDay();
-    date.setDate(date.getDate() - day);
-    return date;
-}
-
-function formatWeekKey(dateLike) {
-    const date = getWeekStart(dateLike);
-    return date.toISOString().slice(0, 10);
-}
-
-function buildWeekSkeleton(weeksCount) {
-    const currentWeekStart = getWeekStart(new Date());
-    const weeks = [];
-
-    for (let offset = weeksCount - 1; offset >= 0; offset -= 1) {
-        const weekStart = new Date(currentWeekStart);
-        weekStart.setDate(currentWeekStart.getDate() - (offset * 7));
-        const weekEnd = new Date(weekStart);
-        weekEnd.setDate(weekStart.getDate() + 6);
-        weeks.push({
-            key: formatWeekKey(weekStart),
-            weekStart,
-            weekEnd,
-            commits: 0,
-            additions: 0,
-            deletions: 0,
-            repos: []
-        });
-    }
-
-    return weeks;
-}
-
-function buildWeekLabel(weekStart, weekEnd) {
-    const fmtMonthDay = new Intl.DateTimeFormat('en-US', {
-        month: 'short',
-        day: 'numeric'
-    });
-    const fmtYear = new Intl.DateTimeFormat('en-US', {
-        year: 'numeric'
-    });
-    return `${fmtMonthDay.format(weekStart)} - ${fmtMonthDay.format(weekEnd)}, ${fmtYear.format(weekEnd)}`;
-}
-
-function buildWeeklySummaryHtml(weeklySummary) {
-    const rows = weeklySummary
-        .slice()
-        .reverse()
-        .map((week) => {
-            const repoText = week.repos.length > 0
-                ? week.repos
-                    .slice(0, 3)
-                    .map(repo => `${repo.name} (${repo.commits})`)
-                    .join(' · ')
-                : '<span class="code-muted">No public commits</span>';
-            const extraReposCount = Math.max(0, week.repos.length - 3);
-            const extraReposText = extraReposCount > 0
-                ? `<span class="code-extra">+${extraReposCount} more</span>`
-                : '';
-            return `
-                <div class="code-week-row${week.commits > 0 ? ' is-active' : ''}">
-                    <div class="code-week-cell week-label">${buildWeekLabel(week.weekStart, week.weekEnd)}</div>
-                    <div class="code-week-cell week-commits">${week.commits}</div>
-                    <div class="code-week-cell week-built">${repoText} ${extraReposText}</div>
-                </div>
-            `;
-        })
-        .join('');
-
-    return `
-        <div class="code-week-table">
-            <div class="code-week-head">
-                <div class="code-week-cell">Week</div>
-                <div class="code-week-cell">Commits</div>
-                <div class="code-week-cell">Built</div>
+function buildLanguagesHtml(languages) {
+    if (!languages || Object.keys(languages).length === 0) return '';
+    const total = Object.values(languages).reduce((a, b) => a + b, 0);
+    const entries = Object.entries(languages)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 12);
+    const rows = entries.map(([lang, bytes]) => {
+        const pct = total > 0 ? (100 * bytes / total).toFixed(1) : 0;
+        return `
+            <div class="code-lang-row">
+                <span class="code-lang-name">${lang}</span>
+                <span class="code-lang-bar-wrap">
+                    <span class="code-lang-bar" style="width: ${pct}%"></span>
+                </span>
+                <span class="code-lang-value">${formatBytes(bytes)}</span>
             </div>
-            ${rows}
+        `;
+    }).join('');
+    return `
+        <div class="code-languages">
+            <div class="code-lang-title">Languages used</div>
+            <div class="code-lang-list">${rows}</div>
         </div>
     `;
-}
-
-function buildSummaryStats(weeklySummary) {
-    const totalCommits = weeklySummary.reduce((sum, week) => sum + week.commits, 0);
-    const activeWeeks = weeklySummary.filter(week => week.commits > 0).length;
-    const touchedRepos = new Set(
-        weeklySummary.flatMap(week => week.repos.map(repo => repo.name))
-    ).size;
-    return { totalCommits, activeWeeks, touchedRepos };
-}
-
-async function fetchGithubRepos(username, fromDateIso) {
-    let page = 1;
-    const repos = [];
-    const cutoffTime = new Date(fromDateIso).getTime();
-
-    while (true) {
-        const response = await fetch(
-            `https://api.github.com/users/${username}/repos?per_page=100&type=owner&sort=updated&page=${page}`,
-            { headers: { Accept: 'application/vnd.github+json' } }
-        );
-        if (response.status === 403) {
-            const resetHeader = response.headers.get('x-ratelimit-reset');
-            const msg = resetHeader
-                ? `GitHub API rate limit exceeded. Try again after ${new Date(parseInt(resetHeader, 10) * 1000).toLocaleTimeString()}.`
-                : 'GitHub API rate limit exceeded (60 req/hr unauthenticated).';
-            throw new Error(msg);
-        }
-        if (!response.ok) {
-            throw new Error(`GitHub repo request failed (${response.status})`);
-        }
-
-        const pageRepos = await response.json();
-        if (pageRepos.length === 0) break;
-
-        const filtered = pageRepos.filter(repo =>
-            !repo.fork &&
-            !repo.archived &&
-            new Date(repo.pushed_at).getTime() >= cutoffTime
-        );
-        repos.push(...filtered);
-
-        if (pageRepos.length < 100) break;
-        page += 1;
-    }
-
-    return repos;
-}
-
-async function fetchRepoContributorStats(owner, repo, maxRetries = 5) {
-    const url = `https://api.github.com/repos/${owner}/${repo}/stats/contributors`;
-
-    for (let attempt = 0; attempt < maxRetries; attempt += 1) {
-        const response = await fetch(url, {
-            headers: { Accept: 'application/vnd.github+json' }
-        });
-
-        if (response.status === 202) {
-            await new Promise(resolve => setTimeout(resolve, 800 * (attempt + 1)));
-            continue;
-        }
-
-        if (response.status === 204) return [];
-
-        if (response.status === 403) {
-            throw new Error('GitHub API rate limit exceeded. Summary will show after limit resets.');
-        }
-        if (!response.ok) {
-            throw new Error(`GitHub stats request failed for ${repo} (${response.status})`);
-        }
-
-        return response.json();
-    }
-
-    return [];
-}
-
-function readSummaryCache(cacheKey) {
-    try {
-        const raw = localStorage.getItem(cacheKey);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (!parsed.savedAt || !Array.isArray(parsed.summary)) return null;
-        if (Date.now() - parsed.savedAt > GITHUB_CACHE_TTL_MS) return null;
-        return parsed.summary;
-    } catch {
-        return null;
-    }
-}
-
-function writeSummaryCache(cacheKey, summary) {
-    try {
-        localStorage.setItem(cacheKey, JSON.stringify({
-            savedAt: Date.now(),
-            summary
-        }));
-    } catch {
-        // No-op if storage is unavailable.
-    }
-}
-
-async function getWeeklyBuildSummary(username) {
-    const cacheKey = `${GITHUB_SUMMARY_CACHE_KEY}_${username}`;
-    const cached = readSummaryCache(cacheKey);
-    if (cached) {
-        return cached.map(week => ({
-            ...week,
-            weekStart: new Date(week.weekStart),
-            weekEnd: new Date(week.weekEnd)
-        }));
-    }
-
-    const { fromISO } = getLastYearDateRange();
-    const weeklySummary = buildWeekSkeleton(GITHUB_ONE_YEAR_WEEKS);
-    const summaryByWeek = new Map(weeklySummary.map(week => [week.key, week]));
-
-    const repos = await fetchGithubRepos(username, fromISO);
-    // Limit repos to stay under GitHub's 60 req/hr unauthenticated limit (1 repo list + N stats calls)
-    const MAX_REPOS_FOR_STATS = 15;
-    const reposToQuery = repos.slice(0, MAX_REPOS_FOR_STATS);
-    for (const repo of reposToQuery) {
-        let contributors = [];
-        try {
-            contributors = await fetchRepoContributorStats(username, repo.name);
-        } catch {
-            continue;
-        }
-        const myStats = contributors.find(
-            contributor => contributor.author && contributor.author.login === username
-        );
-        if (!myStats || !Array.isArray(myStats.weeks)) continue;
-
-        myStats.weeks.forEach((week) => {
-            if (!week.c) return;
-            const weekStartDate = new Date(week.w * 1000);
-            if (weekStartDate < new Date(fromISO)) return;
-
-            const key = formatWeekKey(weekStartDate);
-            const current = summaryByWeek.get(key);
-            if (!current) return;
-
-            current.commits += week.c;
-            current.additions += week.a;
-            current.deletions += week.d;
-            current.repos.push({
-                name: repo.name,
-                commits: week.c,
-                additions: week.a,
-                deletions: week.d
-            });
-        });
-    }
-
-    weeklySummary.forEach((week) => {
-        week.repos.sort((a, b) => b.commits - a.commits);
-    });
-
-    writeSummaryCache(cacheKey, weeklySummary);
-    return weeklySummary;
 }
 
 async function renderCodeSection() {
     const username = getGithubUsername();
     const githubUrl = `https://github.com/${username}`;
-    const { fromISO, toISO } = getLastYearDateRange();
     // GitHub's /contributions URL returns HTML, not an image. Use ghchart.rshah.org for embeddable SVG.
     const contributionGraphUrl = `https://ghchart.rshah.org/${username}`;
 
@@ -605,42 +380,27 @@ async function renderCodeSection() {
     container.innerHTML = `
         <div class="results-table-title">CODE</div>
         <div class="code-header">
-            <div class="code-header-copy">Public coding activity and weekly build log (last 52 weeks)</div>
+            <div class="code-header-copy">GitHub contribution activity</div>
             <a href="${githubUrl}" target="_blank" rel="noopener" class="code-github-link">View GitHub</a>
         </div>
         <div class="code-graph-wrap">
             <img src="${contributionGraphUrl}" alt="${username} GitHub contribution graph" class="code-graph-img">
         </div>
-        <div class="code-disclaimer">Data source: GitHub public API. Summary reflects public repositories where your account was the contributor.</div>
-        <div class="code-stats" id="code-stats">
-            <div class="code-stat-card"><span class="code-stat-label">Total commits</span><span class="code-stat-value">...</span></div>
-            <div class="code-stat-card"><span class="code-stat-label">Active weeks</span><span class="code-stat-value">...</span></div>
-            <div class="code-stat-card"><span class="code-stat-label">Repos touched</span><span class="code-stat-value">...</span></div>
-        </div>
-        <div class="code-weekly" id="code-weekly">
-            <div class="loading">Loading weekly build summary from GitHub...</div>
+        <div class="code-languages-wrap" id="code-languages-wrap">
+            <div class="loading">Loading languages...</div>
         </div>
     `;
     resultsContent.appendChild(container);
 
-    const weeklyContainer = container.querySelector('#code-weekly');
-    const statsContainer = container.querySelector('#code-stats');
-
+    const wrap = document.getElementById('code-languages-wrap');
     try {
-        const weeklySummary = await getWeeklyBuildSummary(username);
-        const stats = buildSummaryStats(weeklySummary);
-
-        statsContainer.innerHTML = `
-            <div class="code-stat-card"><span class="code-stat-label">Total commits</span><span class="code-stat-value">${stats.totalCommits}</span></div>
-            <div class="code-stat-card"><span class="code-stat-label">Active weeks</span><span class="code-stat-value">${stats.activeWeeks} / ${GITHUB_ONE_YEAR_WEEKS}</span></div>
-            <div class="code-stat-card"><span class="code-stat-label">Repos touched</span><span class="code-stat-value">${stats.touchedRepos}</span></div>
-        `;
-        weeklyContainer.innerHTML = buildWeeklySummaryHtml(weeklySummary);
-    } catch (error) {
-        weeklyContainer.innerHTML = `
-            <div style="color: #ff6b6b;">Could not load weekly summary: ${error.message}</div>
-            <div class="code-disclaimer">Open your GitHub profile directly: <a href="${githubUrl}" target="_blank" rel="noopener">${githubUrl}</a></div>
-        `;
+        const res = await fetch('github-stats.json');
+        if (!res.ok) throw new Error(res.status);
+        const data = await res.json();
+        const html = buildLanguagesHtml(data.languages);
+        wrap.innerHTML = html || '<div class="code-muted">No language data yet. Add GH_STATS_TOKEN secret and run the workflow.</div>';
+    } catch {
+        wrap.innerHTML = '<div class="code-muted">Languages unavailable (github-stats.json not found or workflow not run).</div>';
     }
 }
 
