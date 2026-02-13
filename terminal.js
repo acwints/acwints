@@ -453,6 +453,13 @@ async function fetchGithubRepos(username, fromDateIso) {
             `https://api.github.com/users/${username}/repos?per_page=100&type=owner&sort=updated&page=${page}`,
             { headers: { Accept: 'application/vnd.github+json' } }
         );
+        if (response.status === 403) {
+            const resetHeader = response.headers.get('x-ratelimit-reset');
+            const msg = resetHeader
+                ? `GitHub API rate limit exceeded. Try again after ${new Date(parseInt(resetHeader, 10) * 1000).toLocaleTimeString()}.`
+                : 'GitHub API rate limit exceeded (60 req/hr unauthenticated).';
+            throw new Error(msg);
+        }
         if (!response.ok) {
             throw new Error(`GitHub repo request failed (${response.status})`);
         }
@@ -489,6 +496,9 @@ async function fetchRepoContributorStats(owner, repo, maxRetries = 5) {
 
         if (response.status === 204) return [];
 
+        if (response.status === 403) {
+            throw new Error('GitHub API rate limit exceeded. Summary will show after limit resets.');
+        }
         if (!response.ok) {
             throw new Error(`GitHub stats request failed for ${repo} (${response.status})`);
         }
@@ -539,7 +549,10 @@ async function getWeeklyBuildSummary(username) {
     const summaryByWeek = new Map(weeklySummary.map(week => [week.key, week]));
 
     const repos = await fetchGithubRepos(username, fromISO);
-    for (const repo of repos) {
+    // Limit repos to stay under GitHub's 60 req/hr unauthenticated limit (1 repo list + N stats calls)
+    const MAX_REPOS_FOR_STATS = 15;
+    const reposToQuery = repos.slice(0, MAX_REPOS_FOR_STATS);
+    for (const repo of reposToQuery) {
         let contributors = [];
         try {
             contributors = await fetchRepoContributorStats(username, repo.name);
@@ -584,7 +597,8 @@ async function renderCodeSection() {
     const username = getGithubUsername();
     const githubUrl = `https://github.com/${username}`;
     const { fromISO, toISO } = getLastYearDateRange();
-    const contributionGraphUrl = `https://github.com/users/${username}/contributions?from=${fromISO}&to=${toISO}`;
+    // GitHub's /contributions URL returns HTML, not an image. Use ghchart.rshah.org for embeddable SVG.
+    const contributionGraphUrl = `https://ghchart.rshah.org/${username}`;
 
     const container = document.createElement('div');
     container.className = 'results-table code-section';
