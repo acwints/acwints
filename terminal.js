@@ -42,6 +42,13 @@ const QUERIES = [
         displayFormat: 'pivot'
     },
     {
+        sql: 'SELECT * FROM code_activity WHERE user_id = 1 ORDER BY week_start DESC;',
+        name: 'Code',
+        title: 'CODE',
+        chartType: null,
+        displayFormat: 'code'
+    },
+    {
         sql: 'SELECT * FROM social_links WHERE user_id = 1;',
         name: 'Connect',
         title: 'CONNECT',
@@ -60,6 +67,11 @@ const queryList = document.getElementById('query-list');
 const resultsPlaceholder = document.getElementById('results-placeholder');
 const resultsContent = document.getElementById('results-content');
 const chartCanvas = document.getElementById('main-chart');
+const chartArea = document.getElementById('chart-area');
+
+const GITHUB_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+const GITHUB_SUMMARY_CACHE_KEY = 'acwints_code_weekly_summary_v1';
+const GITHUB_ONE_YEAR_WEEKS = 52;
 
 // Initialize
 async function init() {
@@ -122,12 +134,10 @@ function updateSelection() {
 }
 
 // Execute the selected query
-function executeQuery() {
+async function executeQuery() {
     if (!dbReady) return;
 
     const query = QUERIES[selectedIndex];
-    const sqlToRun = query.actualSql || query.sql;
-    const results = executeQuerySQL(sqlToRun);
 
     // Hide placeholder, show results
     resultsPlaceholder.style.display = 'none';
@@ -135,6 +145,15 @@ function executeQuery() {
 
     // Clear and add new results
     resultsContent.innerHTML = '';
+
+    if (query.displayFormat === 'code') {
+        updateChart(query.chartType);
+        await renderCodeSection();
+        return;
+    }
+
+    const sqlToRun = query.actualSql || query.sql;
+    const results = executeQuerySQL(sqlToRun);
 
     if (results.error) {
         resultsContent.innerHTML = `<div style="color: #ff6b6b;">Error: ${results.error}</div>`;
@@ -308,6 +327,309 @@ function formatResults(results, title, displayFormat) {
     return container;
 }
 
+function getGithubUsername() {
+    const githubLink = PORTFOLIO_DATA.social_links.find(link => link.platform === 'GitHub');
+    if (!githubLink) return 'acwints';
+    if (githubLink.username) {
+        return githubLink.username.replace(/^@/, '');
+    }
+    try {
+        const url = new URL(githubLink.url);
+        return url.pathname.replace(/\//g, '') || 'acwints';
+    } catch {
+        return 'acwints';
+    }
+}
+
+function getLastYearDateRange() {
+    const end = new Date();
+    const start = new Date(end);
+    start.setFullYear(end.getFullYear() - 1);
+    const toISO = end.toISOString().slice(0, 10);
+    const fromISO = start.toISOString().slice(0, 10);
+    return { fromISO, toISO };
+}
+
+function getWeekStart(dateLike) {
+    const date = new Date(dateLike);
+    date.setHours(0, 0, 0, 0);
+    const day = date.getDay();
+    date.setDate(date.getDate() - day);
+    return date;
+}
+
+function formatWeekKey(dateLike) {
+    const date = getWeekStart(dateLike);
+    return date.toISOString().slice(0, 10);
+}
+
+function buildWeekSkeleton(weeksCount) {
+    const currentWeekStart = getWeekStart(new Date());
+    const weeks = [];
+
+    for (let offset = weeksCount - 1; offset >= 0; offset -= 1) {
+        const weekStart = new Date(currentWeekStart);
+        weekStart.setDate(currentWeekStart.getDate() - (offset * 7));
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        weeks.push({
+            key: formatWeekKey(weekStart),
+            weekStart,
+            weekEnd,
+            commits: 0,
+            additions: 0,
+            deletions: 0,
+            repos: []
+        });
+    }
+
+    return weeks;
+}
+
+function buildWeekLabel(weekStart, weekEnd) {
+    const fmtMonthDay = new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric'
+    });
+    const fmtYear = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric'
+    });
+    return `${fmtMonthDay.format(weekStart)} - ${fmtMonthDay.format(weekEnd)}, ${fmtYear.format(weekEnd)}`;
+}
+
+function buildWeeklySummaryHtml(weeklySummary) {
+    const rows = weeklySummary
+        .slice()
+        .reverse()
+        .map((week) => {
+            const repoText = week.repos.length > 0
+                ? week.repos
+                    .slice(0, 3)
+                    .map(repo => `${repo.name} (${repo.commits})`)
+                    .join(' · ')
+                : '<span class="code-muted">No public commits</span>';
+            const extraReposCount = Math.max(0, week.repos.length - 3);
+            const extraReposText = extraReposCount > 0
+                ? `<span class="code-extra">+${extraReposCount} more</span>`
+                : '';
+            return `
+                <div class="code-week-row${week.commits > 0 ? ' is-active' : ''}">
+                    <div class="code-week-cell week-label">${buildWeekLabel(week.weekStart, week.weekEnd)}</div>
+                    <div class="code-week-cell week-commits">${week.commits}</div>
+                    <div class="code-week-cell week-built">${repoText} ${extraReposText}</div>
+                </div>
+            `;
+        })
+        .join('');
+
+    return `
+        <div class="code-week-table">
+            <div class="code-week-head">
+                <div class="code-week-cell">Week</div>
+                <div class="code-week-cell">Commits</div>
+                <div class="code-week-cell">Built</div>
+            </div>
+            ${rows}
+        </div>
+    `;
+}
+
+function buildSummaryStats(weeklySummary) {
+    const totalCommits = weeklySummary.reduce((sum, week) => sum + week.commits, 0);
+    const activeWeeks = weeklySummary.filter(week => week.commits > 0).length;
+    const touchedRepos = new Set(
+        weeklySummary.flatMap(week => week.repos.map(repo => repo.name))
+    ).size;
+    return { totalCommits, activeWeeks, touchedRepos };
+}
+
+async function fetchGithubRepos(username, fromDateIso) {
+    let page = 1;
+    const repos = [];
+    const cutoffTime = new Date(fromDateIso).getTime();
+
+    while (true) {
+        const response = await fetch(
+            `https://api.github.com/users/${username}/repos?per_page=100&type=owner&sort=updated&page=${page}`,
+            { headers: { Accept: 'application/vnd.github+json' } }
+        );
+        if (!response.ok) {
+            throw new Error(`GitHub repo request failed (${response.status})`);
+        }
+
+        const pageRepos = await response.json();
+        if (pageRepos.length === 0) break;
+
+        const filtered = pageRepos.filter(repo =>
+            !repo.fork &&
+            !repo.archived &&
+            new Date(repo.pushed_at).getTime() >= cutoffTime
+        );
+        repos.push(...filtered);
+
+        if (pageRepos.length < 100) break;
+        page += 1;
+    }
+
+    return repos;
+}
+
+async function fetchRepoContributorStats(owner, repo, maxRetries = 5) {
+    const url = `https://api.github.com/repos/${owner}/${repo}/stats/contributors`;
+
+    for (let attempt = 0; attempt < maxRetries; attempt += 1) {
+        const response = await fetch(url, {
+            headers: { Accept: 'application/vnd.github+json' }
+        });
+
+        if (response.status === 202) {
+            await new Promise(resolve => setTimeout(resolve, 800 * (attempt + 1)));
+            continue;
+        }
+
+        if (response.status === 204) return [];
+
+        if (!response.ok) {
+            throw new Error(`GitHub stats request failed for ${repo} (${response.status})`);
+        }
+
+        return response.json();
+    }
+
+    return [];
+}
+
+function readSummaryCache(cacheKey) {
+    try {
+        const raw = localStorage.getItem(cacheKey);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed.savedAt || !Array.isArray(parsed.summary)) return null;
+        if (Date.now() - parsed.savedAt > GITHUB_CACHE_TTL_MS) return null;
+        return parsed.summary;
+    } catch {
+        return null;
+    }
+}
+
+function writeSummaryCache(cacheKey, summary) {
+    try {
+        localStorage.setItem(cacheKey, JSON.stringify({
+            savedAt: Date.now(),
+            summary
+        }));
+    } catch {
+        // No-op if storage is unavailable.
+    }
+}
+
+async function getWeeklyBuildSummary(username) {
+    const cacheKey = `${GITHUB_SUMMARY_CACHE_KEY}_${username}`;
+    const cached = readSummaryCache(cacheKey);
+    if (cached) {
+        return cached.map(week => ({
+            ...week,
+            weekStart: new Date(week.weekStart),
+            weekEnd: new Date(week.weekEnd)
+        }));
+    }
+
+    const { fromISO } = getLastYearDateRange();
+    const weeklySummary = buildWeekSkeleton(GITHUB_ONE_YEAR_WEEKS);
+    const summaryByWeek = new Map(weeklySummary.map(week => [week.key, week]));
+
+    const repos = await fetchGithubRepos(username, fromISO);
+    for (const repo of repos) {
+        let contributors = [];
+        try {
+            contributors = await fetchRepoContributorStats(username, repo.name);
+        } catch {
+            continue;
+        }
+        const myStats = contributors.find(
+            contributor => contributor.author && contributor.author.login === username
+        );
+        if (!myStats || !Array.isArray(myStats.weeks)) continue;
+
+        myStats.weeks.forEach((week) => {
+            if (!week.c) return;
+            const weekStartDate = new Date(week.w * 1000);
+            if (weekStartDate < new Date(fromISO)) return;
+
+            const key = formatWeekKey(weekStartDate);
+            const current = summaryByWeek.get(key);
+            if (!current) return;
+
+            current.commits += week.c;
+            current.additions += week.a;
+            current.deletions += week.d;
+            current.repos.push({
+                name: repo.name,
+                commits: week.c,
+                additions: week.a,
+                deletions: week.d
+            });
+        });
+    }
+
+    weeklySummary.forEach((week) => {
+        week.repos.sort((a, b) => b.commits - a.commits);
+    });
+
+    writeSummaryCache(cacheKey, weeklySummary);
+    return weeklySummary;
+}
+
+async function renderCodeSection() {
+    const username = getGithubUsername();
+    const githubUrl = `https://github.com/${username}`;
+    const { fromISO, toISO } = getLastYearDateRange();
+    const contributionGraphUrl = `https://github.com/users/${username}/contributions?from=${fromISO}&to=${toISO}`;
+
+    const container = document.createElement('div');
+    container.className = 'results-table code-section';
+    container.innerHTML = `
+        <div class="results-table-title">CODE</div>
+        <div class="code-header">
+            <div class="code-header-copy">Public coding activity and weekly build log (last 52 weeks)</div>
+            <a href="${githubUrl}" target="_blank" rel="noopener" class="code-github-link">View GitHub</a>
+        </div>
+        <div class="code-graph-wrap">
+            <img src="${contributionGraphUrl}" alt="${username} GitHub contribution graph" class="code-graph-img">
+        </div>
+        <div class="code-disclaimer">Data source: GitHub public API. Summary reflects public repositories where your account was the contributor.</div>
+        <div class="code-stats" id="code-stats">
+            <div class="code-stat-card"><span class="code-stat-label">Total commits</span><span class="code-stat-value">...</span></div>
+            <div class="code-stat-card"><span class="code-stat-label">Active weeks</span><span class="code-stat-value">...</span></div>
+            <div class="code-stat-card"><span class="code-stat-label">Repos touched</span><span class="code-stat-value">...</span></div>
+        </div>
+        <div class="code-weekly" id="code-weekly">
+            <div class="loading">Loading weekly build summary from GitHub...</div>
+        </div>
+    `;
+    resultsContent.appendChild(container);
+
+    const weeklyContainer = container.querySelector('#code-weekly');
+    const statsContainer = container.querySelector('#code-stats');
+
+    try {
+        const weeklySummary = await getWeeklyBuildSummary(username);
+        const stats = buildSummaryStats(weeklySummary);
+
+        statsContainer.innerHTML = `
+            <div class="code-stat-card"><span class="code-stat-label">Total commits</span><span class="code-stat-value">${stats.totalCommits}</span></div>
+            <div class="code-stat-card"><span class="code-stat-label">Active weeks</span><span class="code-stat-value">${stats.activeWeeks} / ${GITHUB_ONE_YEAR_WEEKS}</span></div>
+            <div class="code-stat-card"><span class="code-stat-label">Repos touched</span><span class="code-stat-value">${stats.touchedRepos}</span></div>
+        `;
+        weeklyContainer.innerHTML = buildWeeklySummaryHtml(weeklySummary);
+    } catch (error) {
+        weeklyContainer.innerHTML = `
+            <div style="color: #ff6b6b;">Could not load weekly summary: ${error.message}</div>
+            <div class="code-disclaimer">Open your GitHub profile directly: <a href="${githubUrl}" target="_blank" rel="noopener">${githubUrl}</a></div>
+        `;
+    }
+}
+
 // Update chart based on query type
 function updateChart(chartType) {
     // Destroy existing chart
@@ -315,6 +637,8 @@ function updateChart(chartType) {
         currentChart.destroy();
         currentChart = null;
     }
+
+    chartArea.classList.remove('is-hidden');
 
     // Hide custom containers if they exist
     const logosContainer = document.getElementById('education-logos');
@@ -328,6 +652,7 @@ function updateChart(chartType) {
 
     if (!chartType) {
         chartCanvas.style.display = 'none';
+        chartArea.classList.add('is-hidden');
         return;
     }
 
