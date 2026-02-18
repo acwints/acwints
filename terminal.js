@@ -398,7 +398,7 @@ async function renderCodeSection() {
         if (!res.ok) throw new Error(res.status);
         const data = await res.json();
         const html = buildLanguagesHtml(data.languages);
-        wrap.innerHTML = html || '<div class="code-muted">No language data yet. Add GH_STATS_TOKEN secret and run the workflow.</div>';
+        wrap.innerHTML = html || '<div class="code-muted">No language data yet. Run the Update GitHub stats workflow.</div>';
     } catch {
         wrap.innerHTML = '<div class="code-muted">Languages unavailable (github-stats.json not found or workflow not run).</div>';
     }

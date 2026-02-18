@@ -1,26 +1,29 @@
 #!/usr/bin/env node
 /**
- * Fetches GitHub repo languages using GITHUB_TOKEN.
- * Aggregates across all repos (public + private) and writes github-stats.json.
- * Run from GitHub Actions with GH_STATS_TOKEN as repo secret.
+ * Fetches GitHub repo languages and writes github-stats.json.
+ * If GITHUB_TOKEN is set (recommended: GH_STATS_TOKEN secret), private repos are included.
+ * Without a token, falls back to public repos for GITHUB_STATS_USERNAME.
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const token = process.env.GITHUB_TOKEN;
-if (!token) {
-  console.error('Missing GITHUB_TOKEN (set by workflow from GH_STATS_TOKEN secret)');
-  process.exit(1);
-}
+const token = process.env.GITHUB_TOKEN?.trim();
+const username = (
+  process.env.GITHUB_STATS_USERNAME ||
+  process.env.GITHUB_REPOSITORY_OWNER ||
+  ''
+).trim();
+const hasToken = Boolean(token);
 
 const headers = {
   Accept: 'application/vnd.github+json',
-  Authorization: `Bearer ${token}`,
   'X-GitHub-Api-Version': '2022-11-28',
+  'User-Agent': 'acwints-github-stats',
 };
+if (hasToken) headers.Authorization = `Bearer ${token}`;
 
-async function fetchRepos() {
+async function fetchReposWithUserToken() {
   const repos = [];
   let page = 1;
   while (true) {
@@ -40,6 +43,43 @@ async function fetchRepos() {
   return repos;
 }
 
+async function fetchPublicRepos(owner) {
+  const repos = [];
+  let page = 1;
+  while (true) {
+    const res = await fetch(
+      `https://api.github.com/users/${encodeURIComponent(owner)}/repos?per_page=100&type=owner&sort=updated&page=${page}`,
+      { headers }
+    );
+    if (!res.ok) {
+      throw new Error(`Failed to fetch public repos for ${owner}: ${res.status} ${await res.text()}`);
+    }
+    const pageRepos = await res.json();
+    if (pageRepos.length === 0) break;
+    repos.push(...pageRepos.filter((r) => !r.fork));
+    if (pageRepos.length < 100) break;
+    page++;
+  }
+  return repos;
+}
+
+async function fetchRepos() {
+  if (hasToken) {
+    try {
+      const repos = await fetchReposWithUserToken();
+      if (repos.length > 0) return repos;
+      console.warn('Authenticated repo query returned 0 repos. Falling back to public repos.');
+    } catch (err) {
+      console.warn(`Authenticated repo query failed (${err.message}). Falling back to public repos.`);
+    }
+  }
+
+  if (!username) {
+    throw new Error('Missing GITHUB_STATS_USERNAME for public fallback mode');
+  }
+  return fetchPublicRepos(username);
+}
+
 async function fetchLanguages(owner, repo) {
   const res = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/languages`,
@@ -55,6 +95,9 @@ async function fetchLanguages(owner, repo) {
 
 async function main() {
   const repos = await fetchRepos();
+  if (repos.length === 0) {
+    console.warn('No repositories found; writing empty language data.');
+  }
   const aggregated = {};
 
   for (const r of repos) {

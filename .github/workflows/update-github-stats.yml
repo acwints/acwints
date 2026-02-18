@@ -1,5 +1,5 @@
-# Fetches GitHub languages (and stats) using a PAT, writes github-stats.json
-# Requires repo secret: GH_STATS_TOKEN (PAT with repo scope)
+# Fetches GitHub languages (and stats) and writes github-stats.json
+# Optional repo secret: GH_STATS_TOKEN (PAT with repo scope for private repos)
 name: Update GitHub stats
 
 on:
@@ -27,6 +27,7 @@ jobs:
       - name: Fetch GitHub stats
         env:
           GITHUB_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+          GITHUB_STATS_USERNAME: ${{ github.repository_owner }}
         run: node scripts/fetch-github-stats.js
 
       - name: Commit and push
