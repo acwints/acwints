@@ -10,16 +10,22 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   update-stats:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          # Use PAT when available so pushes can trigger downstream workflows (e.g. Pages deploy).
-          token: ${{ secrets.GH_STATS_TOKEN || github.token }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -34,13 +40,37 @@ jobs:
         run: node scripts/fetch-github-stats.js
 
       - name: Commit and push
+        id: commit_push
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add github-stats.json
           if git diff --staged --quiet; then
             echo "No changes"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "chore: update github-stats.json"
-            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            if git push; then
+              echo "pushed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Push failed, continuing with deploy."
+              echo "pushed=false" >> "$GITHUB_OUTPUT"
+            fi
           fi
+
+      - name: Setup Pages
+        if: steps.commit_push.outputs.changed == 'true'
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        if: steps.commit_push.outputs.changed == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        if: steps.commit_push.outputs.changed == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4
