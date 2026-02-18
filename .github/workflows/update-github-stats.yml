@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Use PAT when available so pushes can trigger downstream workflows (e.g. Pages deploy).
+          token: ${{ secrets.GH_STATS_TOKEN || github.token }}
 
       - name: Setup Node
         uses: actions/setup-node@v4

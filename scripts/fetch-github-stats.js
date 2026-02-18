@@ -23,7 +23,7 @@ const headers = {
 };
 if (hasToken) headers.Authorization = `Bearer ${token}`;
 
-async function fetchReposWithUserToken() {
+async function fetchReposWithUserToken(ownerFilter) {
   const repos = [];
   let page = 1;
   while (true) {
@@ -40,7 +40,9 @@ async function fetchReposWithUserToken() {
     if (pageRepos.length < 100) break;
     page++;
   }
-  return repos;
+  const wantedOwner = (ownerFilter || '').trim().toLowerCase();
+  if (!wantedOwner) return repos;
+  return repos.filter((r) => (r.owner?.login || '').toLowerCase() === wantedOwner);
 }
 
 async function fetchPublicRepos(owner) {
@@ -66,9 +68,11 @@ async function fetchPublicRepos(owner) {
 async function fetchRepos() {
   if (hasToken) {
     try {
-      const repos = await fetchReposWithUserToken();
+      const repos = await fetchReposWithUserToken(username);
       if (repos.length > 0) return repos;
-      console.warn('Authenticated repo query returned 0 repos. Falling back to public repos.');
+      console.warn(
+        `Authenticated repo query returned 0 repos for owner "${username || '(none)'}". Falling back to public repos.`
+      );
     } catch (err) {
       console.warn(`Authenticated repo query failed (${err.message}). Falling back to public repos.`);
     }
