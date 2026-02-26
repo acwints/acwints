@@ -1,17 +1,17 @@
 {
   "languages": {
-    "TypeScript": 5328635,
-    "CSS": 5211434,
-    "Python": 1584881,
-    "JavaScript": 572611,
-    "HTML": 547598,
+    "TypeScript": 5631841,
+    "CSS": 5226089,
+    "Python": 1846441,
+    "JavaScript": 579193,
+    "HTML": 547591,
     "PLpgSQL": 39903,
+    "Shell": 8824,
     "Dart": 4317,
     "Dockerfile": 3839,
-    "Shell": 1476,
     "Mako": 635,
     "Nix": 51,
     "Procfile": 37
   },
-  "updatedAt": "2026-02-25T06:24:29.155Z"
+  "updatedAt": "2026-02-26T06:21:30.897Z"
 }
