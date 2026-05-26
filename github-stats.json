@@ -3,15 +3,15 @@
     "TypeScript": 8189329,
     "CSS": 5590208,
     "Python": 4362474,
-    "JavaScript": 753497,
-    "HTML": 556924,
+    "JavaScript": 799424,
+    "HTML": 559773,
     "PLpgSQL": 39903,
-    "Shell": 8824,
+    "Shell": 10209,
     "Dart": 4317,
     "Dockerfile": 3950,
     "Mako": 1862,
     "Procfile": 99,
     "Nix": 51
   },
-  "updatedAt": "2026-05-25T07:33:38.945Z"
+  "updatedAt": "2026-05-26T07:12:40.926Z"
 }
