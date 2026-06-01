@@ -1,9 +1,9 @@
 {
   "languages": {
-    "TypeScript": 8191194,
-    "CSS": 5639461,
+    "TypeScript": 8250034,
+    "CSS": 5641925,
     "Python": 4362512,
-    "JavaScript": 1047539,
+    "JavaScript": 1131331,
     "HTML": 556924,
     "PLpgSQL": 39903,
     "Shell": 10002,
@@ -13,5 +13,5 @@
     "Procfile": 99,
     "Nix": 51
   },
-  "updatedAt": "2026-05-31T07:18:47.962Z"
+  "updatedAt": "2026-06-01T07:45:27.105Z"
 }
