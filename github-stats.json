@@ -1,11 +1,11 @@
 {
   "languages": {
-    "TypeScript": 8606739,
-    "CSS": 5671546,
+    "TypeScript": 8623361,
+    "CSS": 5667550,
     "Python": 4532116,
-    "JavaScript": 1524576,
+    "JavaScript": 1533935,
     "HTML": 556924,
-    "PLpgSQL": 39903,
+    "PLpgSQL": 34928,
     "Shell": 10002,
     "Dart": 4317,
     "Dockerfile": 3952,
@@ -13,5 +13,5 @@
     "Procfile": 99,
     "Nix": 51
   },
-  "updatedAt": "2026-07-05T08:45:31.797Z"
+  "updatedAt": "2026-07-06T10:06:55.883Z"
 }
