@@ -1,9 +1,9 @@
 {
   "languages": {
-    "TypeScript": 17587570,
-    "CSS": 5712819,
+    "TypeScript": 17629270,
+    "CSS": 5712709,
     "Python": 4830336,
-    "JavaScript": 1900774,
+    "JavaScript": 4552286,
     "HTML": 572739,
     "Objective-C": 202617,
     "Shell": 138261,
@@ -17,5 +17,5 @@
     "Procfile": 99,
     "Nix": 51
   },
-  "updatedAt": "2026-08-04T08:28:10.400Z"
+  "updatedAt": "2026-08-05T08:26:55.429Z"
 }
