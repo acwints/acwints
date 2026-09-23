@@ -1,21 +1,21 @@
 {
   "languages": {
-    "TypeScript": 18186074,
-    "CSS": 5800100,
-    "Python": 5201560,
-    "JavaScript": 4552507,
-    "HTML": 577748,
-    "Swift": 221669,
-    "PLpgSQL": 219156,
-    "Objective-C": 202617,
-    "Shell": 139735,
-    "C": 9038,
-    "Dockerfile": 7442,
+    "TypeScript": 18334625,
+    "CSS": 5810345,
+    "Python": 5257843,
+    "JavaScript": 4734798,
+    "HTML": 581674,
+    "Objective-C": 405234,
+    "Swift": 226672,
+    "PLpgSQL": 212559,
+    "Shell": 119198,
+    "C": 18076,
+    "Dockerfile": 7549,
     "Dart": 4317,
     "Mako": 1862,
     "Ruby": 379,
     "Procfile": 99,
     "Nix": 51
   },
-  "updatedAt": "2026-09-22T10:48:18.985Z"
+  "updatedAt": "2026-09-23T10:37:57.361Z"
 }
