@@ -1,14 +1,14 @@
 {
   "languages": {
-    "TypeScript": 20435118,
-    "JavaScript": 6534493,
-    "CSS": 5887708,
+    "TypeScript": 20439016,
+    "JavaScript": 6573411,
+    "CSS": 5888356,
     "Python": 5591203,
     "HTML": 788682,
-    "Swift": 588873,
+    "Swift": 626340,
     "PLpgSQL": 230851,
     "Objective-C": 202617,
-    "Shell": 131743,
+    "Shell": 134747,
     "C": 9038,
     "Batchfile": 8498,
     "Dockerfile": 7588,
@@ -18,5 +18,5 @@
     "Procfile": 99,
     "Nix": 51
   },
-  "updatedAt": "2026-11-12T14:30:10.058Z"
+  "updatedAt": "2026-11-13T13:47:30.190Z"
 }
