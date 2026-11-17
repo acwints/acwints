@@ -1,10 +1,10 @@
 {
   "languages": {
     "TypeScript": 20455122,
-    "JavaScript": 6944011,
-    "CSS": 5870780,
+    "JavaScript": 7202948,
+    "CSS": 5876221,
     "Python": 5591203,
-    "HTML": 795544,
+    "HTML": 801220,
     "Swift": 631206,
     "PLpgSQL": 230851,
     "Objective-C": 202617,
@@ -18,5 +18,5 @@
     "Procfile": 99,
     "Nix": 51
   },
-  "updatedAt": "2026-11-16T14:32:46.317Z"
+  "updatedAt": "2026-11-17T15:23:02.739Z"
 }
